@@ -6,7 +6,7 @@
 	<groupId>io.moorea</groupId>
 	<artifactId>moorea-files</artifactId>
 
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
@@ -21,6 +21,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.7</java.version>
+		
+    <!-- The main class to start by executing java -jar -->
+    <start-class>io.moorea.Application</start-class>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -56,10 +60,17 @@
 			<version>5.5.9</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-xtra</artifactId>
+			<version>5.5.9</version>
+		</dependency>
+		
+
 	</dependencies>
 
 	<build>
-	<finalName>moorea-files</finalName>
+		<finalName>moorea-files</finalName>
 		<plugins>
 
 			<plugin>
@@ -73,7 +84,8 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			
+			
 
 		</plugins>
 	</build>

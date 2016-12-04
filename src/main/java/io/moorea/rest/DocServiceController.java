@@ -25,13 +25,12 @@ public class DocServiceController {
         return new JsonResult(true, "is Alive!");    	
     }
     
-    
+
     @RequestMapping(value = "/htmlToPdf", method=RequestMethod.POST)
     public JsonResult htmlToPdf(@RequestBody String postPayload) throws Exception {        
     	InputStream is = new ByteArrayInputStream(postPayload.getBytes());    	
     	return pdfService.htmlToPdf(is);    	
     }
-
     
 
 }
