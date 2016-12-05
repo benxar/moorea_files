@@ -44,8 +44,9 @@ public class DocServiceController {
     
     @RequestMapping(value = "/api/files/next_number/{id}", method=RequestMethod.POST)        
     public JsonResult next_number(@PathVariable String id, @RequestBody String postPayload) throws Exception {
+    	
     	try{
-    		JsonParser parser = new JsonParser();
+    		JsonParser parser = new JsonParser(); 
     		JsonObject obj = parser.parse(postPayload).getAsJsonObject();    		
     		//Validate pdf base64 file
     		JsonResult jsonResult = pdfService.validatePdfFormat(obj.get("b64").getAsString());
@@ -58,10 +59,10 @@ public class DocServiceController {
     		System.out.println(jsonResult.getSuccess());
     		return jsonResult;
     	}catch(Exception e){
-    		
+    		e.printStackTrace();
     	}
     	
-    	return new JsonResult(false, id);   	
+    	return new JsonResult(false, "Existe un error en los parametros");   	
     }
 
 }
