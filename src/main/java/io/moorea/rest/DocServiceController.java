@@ -4,12 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import io.moorea.model.JsonResult;
+import io.moorea.service.BookService;
 import io.moorea.service.PdfService;
 
 
@@ -20,6 +25,10 @@ public class DocServiceController {
     @Autowired
     private PdfService pdfService;
    
+    @Autowired
+    private BookService bookService;
+
+    
     @RequestMapping(value = "/alive")
     public JsonResult getName() throws Exception {        
         return new JsonResult(true, "is Alive!");    	
@@ -32,5 +41,27 @@ public class DocServiceController {
     	return pdfService.htmlToPdf(is);    	
     }
     
+    
+    @RequestMapping(value = "/api/files/next_number/{id}", method=RequestMethod.POST)        
+    public JsonResult next_number(@PathVariable String id, @RequestBody String postPayload) throws Exception {
+    	try{
+    		JsonParser parser = new JsonParser();
+    		JsonObject obj = parser.parse(postPayload).getAsJsonObject();    		
+    		//Validate pdf base64 file
+    		JsonResult jsonResult = pdfService.validatePdfFormat(obj.get("b64").getAsString());
+    		if (!jsonResult.getSuccess()){
+    			return jsonResult;
+    		}
+    		//Get Document w temp number
+    		jsonResult = bookService.getNextNumber(jsonResult.getObject(), obj.get("number").getAsString());
+    		
+    		System.out.println(jsonResult.getSuccess());
+    		return jsonResult;
+    	}catch(Exception e){
+    		
+    	}
+    	
+    	return new JsonResult(false, id);   	
+    }
 
 }

@@ -5,22 +5,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfGState;
+import com.itextpdf.text.pdf.PdfAnnotation;
+import com.itextpdf.text.pdf.PdfBorderArray;
+import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
 
 public class TransparentWatermark {
  
-    public static final String SRC = "/Users/juanmanuelcarrascal/Documents/Expedientes/NotaPedidoPersonal.pdf";
+    public static final String SRC = "/Users/juanmanuelcarrascal/Documents/resolucion.pdf";
     public static final String DEST = "/Users/juanmanuelcarrascal/Documents/Expedientes/NotaPedidoPersonal_sello.pdf";
     public static final String IMG = "/Users/juanmanuelcarrascal/Documents/Expedientes/sello.png";
     
@@ -31,34 +27,23 @@ public class TransparentWatermark {
     }
  
     public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
-        PdfReader reader = new PdfReader(src);
-        int n = reader.getNumberOfPages();
+    	PdfReader reader = new PdfReader(src);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
-       
-        // image watermark
         Image img = Image.getInstance(IMG);
+        float x = 10;
+        float y = 650;
         float w = img.getScaledWidth();
         float h = img.getScaledHeight();
-        // transparency
-        PdfGState gs1 = new PdfGState();
-        gs1.setFillOpacity(0.5f);
-        // properties
-        PdfContentByte over;
-        Rectangle pagesize;
-        float x, y;
-        // loop over every page
-        for (int i = 1; i <= n; i++) {
-            pagesize = reader.getPageSizeWithRotation(i);
-            x = (pagesize.getLeft() + pagesize.getRight()) / 2;
-            y = (pagesize.getTop() + pagesize.getBottom()) / 2;
-            over = stamper.getOverContent(i);
-            over.saveState();
-            over.setGState(gs1);
-            if (i == 1)                
-                over.addImage(img, w-5, 0, 0, h-5, 510, 690);
-            over.restoreState();
-        }
+        System.out.println(reader.getPageSize(1).getWidth() - 100);
+        img.setAbsolutePosition(reader.getPageSize(1).getWidth() - 150, reader.getPageSize(1).getHeight() - 150);
+        stamper.getOverContent(1).addImage(img);
+        Rectangle linkLocation = new Rectangle(x, y, x + w, y + h);
+        PdfDestination destination = new PdfDestination(PdfDestination.FIT);
+        PdfAnnotation link = PdfAnnotation.createLink(stamper.getWriter(),
+                linkLocation, PdfAnnotation.HIGHLIGHT_INVERT,
+                reader.getNumberOfPages(), destination);
+        link.setBorder(new PdfBorderArray(0, 0, 0));
+        stamper.addAnnotation(link, 1);
         stamper.close();
-        reader.close();
     }
 }

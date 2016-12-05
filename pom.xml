@@ -21,9 +21,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.7</java.version>
-		
-    <!-- The main class to start by executing java -jar -->
-    <start-class>io.moorea.Application</start-class>
+
+		<!-- The main class to start by executing java -jar -->
+		<start-class>io.moorea.Application</start-class>
 
 	</properties>
 	<dependencies>
@@ -48,6 +48,20 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jettison/jettison -->
+		<dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+			<version>1.3.8</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
@@ -65,7 +79,7 @@
 			<artifactId>itext-xtra</artifactId>
 			<version>5.5.9</version>
 		</dependency>
-		
+
 
 	</dependencies>
 
@@ -84,8 +98,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
+
+
 
 		</plugins>
 	</build>
