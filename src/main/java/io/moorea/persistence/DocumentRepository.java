@@ -1,6 +1,7 @@
 package io.moorea.persistence;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
@@ -40,7 +41,6 @@ public class DocumentRepository {
 			datastore = morphia.createDatastore(client, "mydb");
 			datastore.ensureIndexes();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			datastore = null;
 		}
@@ -68,5 +68,34 @@ public class DocumentRepository {
 			toReturn = new JsonResult(false, "Error while performing search");
 		}
 		return toReturn;
+	}
+	
+	public JsonResult getDocumentById(UUID id){
+		JsonResult toReturn = null;
+		try {
+			Query<Document> query = datastore.createQuery(Document.class);
+			Document result = query.field("id").equal(id).get();
+			if(result!=null)
+				toReturn = new JsonResult(true, "Success",result);
+			else
+				toReturn = new JsonResult(false, "No result was found");
+		} catch (Exception e) {
+			toReturn = new JsonResult(false, "Error while performing search");
+		}
+		return toReturn;
+	}
+	
+	public JsonResult getDocumentFileById(UUID id,String fileId){
+		try {
+			Query<Document> q = datastore.createQuery(Document.class);
+			Document auxResult = q.field("id").equal(id).field("files.doc_id").equal(fileId).project("files" , true).get();
+			if(auxResult != null)
+				for(DocumentFile aux : auxResult.getFiles())
+					if(aux.getDoc_id()==fileId)
+						return new JsonResult(true, "Success",aux);	
+			return new JsonResult(false, "No result was found");
+		} catch (Exception e) {
+			return new JsonResult(false, "Error while performing search");
+		}
 	}
 }

@@ -2,6 +2,7 @@ package io.moorea.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.Morphia;
@@ -114,4 +115,15 @@ public class DocServiceController {
     		@PathVariable String order_filed,@PathVariable String order_direction) throws Exception{
     	return DocumentRepository.getInstance().getDocuments(type, page, limit, order_filed, order_direction);
     }
+    
+    @RequestMapping(value = "/api/files/manager/{id}", method=RequestMethod.GET)
+    public JsonResult managerGetById(@PathVariable UUID id) throws Exception{
+    	return DocumentRepository.getInstance().getDocumentById(id);
+    }
+    
+    @RequestMapping(value = "/api/files/manager/{id}/{number}", method=RequestMethod.GET)
+    public JsonResult managerGetDocumentFileByDocumentIdAndNumber(@PathVariable UUID id,@PathVariable String number) throws Exception{
+    	return DocumentRepository.getInstance().getDocumentFileById(id, number);
+    }
+    
 }
