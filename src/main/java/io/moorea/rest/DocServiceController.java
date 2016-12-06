@@ -112,6 +112,6 @@ public class DocServiceController {
     @RequestMapping(value = "/api/files/manager/{type}/{page}/{limit}/{order_filed}/{order_direction}", method=RequestMethod.GET)
     public JsonResult managerGet(@PathVariable String type,@PathVariable int page,@PathVariable int limit,
     		@PathVariable String order_filed,@PathVariable String order_direction) throws Exception{
-    	return null;
+    	return DocumentRepository.getInstance().getDocuments(type, page, limit, order_filed, order_direction);
     }
 }

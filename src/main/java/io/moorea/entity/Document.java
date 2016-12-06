@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.utils.IndexType;
 
 @Entity("Document")
 public class Document {
@@ -21,7 +22,6 @@ public class Document {
 	private int year;
 	private int updates;
 	private Date lastUpdate;
-	@Indexed
 	@Embedded
 	private List<DocumentFile> files = new ArrayList<>();
 	

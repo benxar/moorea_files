@@ -23,4 +23,7 @@ public class Category {
 		this.id = categoryId;
 		this.text = categoryText;
 	}
+	public Category() {
+		super();
+	}
 }

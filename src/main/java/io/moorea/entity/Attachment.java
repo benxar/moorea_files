@@ -31,4 +31,7 @@ public class Attachment {
 		this.name = name;
 		this.path = path;
 	}
+	public Attachment() {
+		super();
+	}
 }

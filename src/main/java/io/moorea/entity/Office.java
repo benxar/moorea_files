@@ -23,4 +23,7 @@ public class Office {
 		this.id = officeId;
 		this.text = officeText;
 	}
+	public Office() {
+		super();
+	}
 }

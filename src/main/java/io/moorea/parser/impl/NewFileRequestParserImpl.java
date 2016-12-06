@@ -14,7 +14,7 @@ public class NewFileRequestParserImpl implements IJsonParser {
 			JsonParser parser = new JsonParser(); 
 			JsonObject obj = parser.parse(toParse).getAsJsonObject();    		
 			///parseo de tipo de archivo
-			String type = obj.get("type").toString();
+			String type = obj.get("type").getAsString();
 			JsonObject header = obj.get("header").getAsJsonObject();
 			///parseo de año
 			int anio = Integer.parseInt(header.get("year").getAsString());

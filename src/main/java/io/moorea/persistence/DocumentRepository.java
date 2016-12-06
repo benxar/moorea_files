@@ -1,13 +1,17 @@
 package io.moorea.persistence;
 
+import java.util.List;
+
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.Query;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.mongodb.MongoClient;
 
 import io.moorea.entity.*;
+import io.moorea.model.JsonResult;
 
 public class DocumentRepository {
 	
@@ -32,7 +36,7 @@ public class DocumentRepository {
 		try {
 			MongoClient client = new MongoClient();
 			Morphia morphia = new Morphia();
-			morphia.mapPackage("entity");
+			morphia.mapPackage("io.moorea.entity");
 			datastore = morphia.createDatastore(client, "mydb");
 			datastore.ensureIndexes();
 		} catch (Exception e) {
@@ -51,8 +55,18 @@ public class DocumentRepository {
 			return null;
 	}
 	
-	public void getDocuments(String type,int page,int limit,String order_filed,String order_direction){
-		Query<Document> query = datastore.createQuery(Document.class);
-		query.field("type").equal(type).order((order_direction.compareToIgnoreCase(""))+order_filed);
+	public JsonResult getDocuments(String type,int page,int limit,String order_filed,String order_direction){
+		JsonResult toReturn = null;
+		try {
+			Query<Document> query = datastore.createQuery(Document.class);
+			List<Document> result = query.field("type").equal(type).order((order_direction.compareToIgnoreCase("asc")==0?"":"-")+order_filed).offset(page).limit(limit).asList();
+			if(result!=null && result.size()>0)
+				toReturn = new JsonResult(true, "Success",result);
+			else
+				toReturn = new JsonResult(false, "No results where found");
+		} catch (Exception e) {
+			toReturn = new JsonResult(false, "Error while performing search");
+		}
+		return toReturn;
 	}
 }
