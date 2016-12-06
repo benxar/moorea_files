@@ -11,7 +11,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 import io.moorea.model.JsonResult;

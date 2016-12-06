@@ -21,7 +21,7 @@
 	},
 	{
 		"method": "GET",
-		"path": "/api/files/manager?type=book&page=1&limit=10&order_filed=year&order_direction=asc",
+		"path": "/api/files/manager/<type>/<page>/<limit>/<order_filed>/<order_direction>",//type=string;page=int;limit=int;order_filed=string;order_direction=string
 		"response": {
 			"success": true,
 			"result": [

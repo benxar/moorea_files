@@ -12,7 +12,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;

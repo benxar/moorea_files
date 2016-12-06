@@ -1,7 +1,6 @@
 package io.moorea.manual;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Map;
 
 import com.itextpdf.text.pdf.PdfReader;

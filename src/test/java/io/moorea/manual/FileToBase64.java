@@ -1,16 +1,11 @@
 package io.moorea.manual;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.tomcat.util.codec.binary.Base64;
-
-import com.itextpdf.text.pdf.PdfReader;
 
 public class FileToBase64 {
 
