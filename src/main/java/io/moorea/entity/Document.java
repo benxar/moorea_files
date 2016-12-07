@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mongodb.morphia.annotations.*;
-import org.mongodb.morphia.utils.IndexType;
 
 @Entity("Document")
 public class Document {
