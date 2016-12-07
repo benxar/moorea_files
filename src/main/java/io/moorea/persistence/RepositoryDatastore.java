@@ -5,17 +5,17 @@ import org.mongodb.morphia.Morphia;
 
 import com.mongodb.MongoClient;
 
-public class DocumentRepositoryDatastore {
-	private DocumentRepositoryDatastore() {
+public class RepositoryDatastore {
+	private RepositoryDatastore() {
 	}
 	private static Datastore datastore = null;
-	private static DocumentRepositoryDatastore instance = null;
+	private static RepositoryDatastore instance = null;
 
 	public static Datastore getDatastore() {
 		if (datastore == null) {
-			synchronized (DocumentRepositoryDatastore.class) {
+			synchronized (RepositoryDatastore.class) {
 				if (instance == null) {
-					instance = new DocumentRepositoryDatastore();
+					instance = new RepositoryDatastore();
 					if (!setDatastore())
 						instance = null;
 				}

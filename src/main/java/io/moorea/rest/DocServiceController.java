@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import io.moorea.entity.Category;
 import io.moorea.entity.Document;
 import io.moorea.entity.Office;
@@ -22,7 +19,6 @@ import io.moorea.model.JsonResult;
 import io.moorea.parser.IJsonParser;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
 import io.moorea.parser.request.NewFileRequest;
-import io.moorea.service.BookService;
 import io.moorea.service.DocumentRepositoryService;
 import io.moorea.service.PdfService;
 
@@ -34,8 +30,8 @@ public class DocServiceController {
 	@Autowired
 	private PdfService pdfService;
 
-	@Autowired
-	private BookService bookService;
+	// @Autowired
+	// private BookService bookService;
 
 	@Autowired
 	private DocumentRepositoryService documentService;
@@ -52,30 +48,38 @@ public class DocServiceController {
 	}
 
 	@RequestMapping(value = "/api/files/next_number/{id}", method = RequestMethod.POST)
-	public JsonResult next_number(@PathVariable String id, @RequestBody String postPayload) throws Exception {
-
+	public JsonResult next_number(@PathVariable UUID id, @RequestBody String postPayload) throws Exception {
+		// comentado por ahora
+		/*
+		 * try { JsonParser parser = new JsonParser(); JsonObject obj =
+		 * parser.parse(postPayload).getAsJsonObject(); // Validate pdf base64
+		 * file JsonResult jsonResult =
+		 * pdfService.validatePdfFormat(obj.get("b64").getAsString()); if
+		 * (!jsonResult.getSuccess()) { return jsonResult; } // Get Document w
+		 * temp number jsonResult =
+		 * bookService.getNextNumber(jsonResult.getObject(),
+		 * obj.get("number").getAsString());
+		 * 
+		 * System.out.println(jsonResult.getSuccess()); return jsonResult; }
+		 * catch (Exception e) { e.printStackTrace(); } return new
+		 * JsonResult(false, "Existe un error en los parametros");
+		 */
+		JsonResult result = null;
 		try {
-			JsonParser parser = new JsonParser();
-			JsonObject obj = parser.parse(postPayload).getAsJsonObject();
-			// Validate pdf base64 file
-			JsonResult jsonResult = pdfService.validatePdfFormat(obj.get("b64").getAsString());
-			if (!jsonResult.getSuccess()) {
-				return jsonResult;
-			}
-			// Get Document w temp number
-			jsonResult = bookService.getNextNumber(jsonResult.getObject(), obj.get("number").getAsString());
-
-			System.out.println(jsonResult.getSuccess());
-			return jsonResult;
+			int nextNumber = documentService.nextNumber(id);
+			if (nextNumber > 0)
+				result = new JsonResult(true, "Success", nextNumber);
+			else
+				result = new JsonResult(false, "Error while retrieving next document number");
 		} catch (Exception e) {
 			e.printStackTrace();
+			result = new JsonResult(false, "There's an error in parameters");
 		}
-
-		return new JsonResult(false, "Existe un error en los parametros");
+		return result;
 	}
 
 	@RequestMapping(value = "/api/files/manager", method = RequestMethod.POST)
-	public JsonResult managerPost(@RequestBody String postPayload) throws Exception {
+	public JsonResult managerPostDocument(@RequestBody String postPayload) throws Exception {
 		String error = "";
 		UUID generatedKey = null;
 		boolean hayError = false;

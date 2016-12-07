@@ -15,4 +15,6 @@ public interface DocumentRepositoryService {
 	public JsonResult getDocumentFileById(UUID id,String fileId);
 	
 	public JsonResult saveDocumentFile(UUID id,int number, byte[] toSave);
+	
+	public int nextNumber(UUID id);
 }
