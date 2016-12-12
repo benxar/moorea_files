@@ -1,7 +1,10 @@
 package io.moorea.rest;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.mongodb.morphia.Morphia;
@@ -12,14 +15,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mongodb.util.JSON;
+
 import io.moorea.entity.Category;
 import io.moorea.entity.Document;
+import io.moorea.entity.ExpiringDocument;
 import io.moorea.entity.Office;
+import io.moorea.model.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.parser.IJsonParser;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
+import io.moorea.parser.request.FilePostRequest;
 import io.moorea.parser.request.NewFileRequest;
 import io.moorea.service.DocumentRepositoryService;
+import io.moorea.service.ExpiringDocumentRepositoryService;
 import io.moorea.service.PdfService;
 
 @RestController
@@ -35,6 +44,9 @@ public class DocServiceController {
 
 	@Autowired
 	private DocumentRepositoryService documentService;
+
+	@Autowired
+	private ExpiringDocumentRepositoryService expDocService;
 
 	@RequestMapping(value = "/alive")
 	public JsonResult getName() throws Exception {
@@ -66,11 +78,26 @@ public class DocServiceController {
 		 */
 		JsonResult result = null;
 		try {
-			int nextNumber = documentService.nextNumber(id);
-			if (nextNumber > 0)
-				result = new JsonResult(true, "Success", nextNumber);
-			else
-				result = new JsonResult(false, "Error while retrieving next document number");
+			ExpiringDocument nextDocument = documentService.nextNumber(id);
+			if (nextDocument != null) {
+				switch (nextDocument.getErrorCode()) {
+				case DATASTORE_NOT_AVAILABLE:
+					result = new JsonResult(false, "Datastore not available");
+					break;
+				case FILE_LOCKED:
+					result = new JsonResult(false, "The file is locked: another document is pending of insert");
+					break;
+				case FILE_NOT_FOUND:
+					result = new JsonResult(false, "The file wasn't found");
+					break;
+				case NO_ERROR:
+					result = new JsonResult(true, "Success", nextDocument);
+					break;
+				default:
+					break;
+				}
+			}else
+				result = new JsonResult(false, "General error while retrieving next number");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = new JsonResult(false, "There's an error in parameters");
@@ -129,6 +156,28 @@ public class DocServiceController {
 	public JsonResult managerGetDocumentFileByDocumentIdAndNumber(@PathVariable UUID id, @PathVariable String number)
 			throws Exception {
 		return documentService.getDocumentFileById(id, number);
+	}
+
+	@RequestMapping(value = "/api/files/manager/{id}/{number}", method = RequestMethod.POST)
+	public JsonResult managerPostDocumentFile(@PathVariable UUID id, @PathVariable int number,
+			@RequestBody String postPayload) {
+		JsonResult result = null;
+		try {
+			int existsTempDoc = expDocService.checkExistence(id, number);
+			if (existsTempDoc == 1) {
+				IJsonParser parser = new NewFileRequestParserImpl();
+				FilePostRequest req = (FilePostRequest) parser.parseJson(postPayload);
+
+				result = new JsonResult(true, "Success", "cosas");
+			} else if (existsTempDoc == 0) {
+				result = new JsonResult(false, "The document number is invalid or has expired");
+			} else
+				result = new JsonResult(false, "Error while searching temporary document number");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new JsonResult(false, "There's an error in parameters");
+		}
+		return result;
 	}
 
 }

@@ -54,7 +54,7 @@
 					"last_update": "25/12/2016",
 					"category": {"id": "resolucion", "text": "Resolucion"}
 				},
-				"index ": [
+				"index ": [ //agregar archivos adjuntos de forma separada en el indice
 					{
 						"file_id": "file_1",
 						"doc_id": "doc_1"
@@ -114,6 +114,8 @@
 		"logic": "Get the file path from the indexes collection using the id and number keys and return it"
 	},
 	{
+		//nota: cuando piden numero siguiente, el expediente se bloquea y no es posible insertar nuevos documentos y 
+		//	esta funcion devolvera error mientras este bloqueado
 		"method": "POST",
 		"path": "/api/files/next_number/<id>",
 		"request": {
@@ -123,8 +125,9 @@
 		"response": {
 			"success": true,
 			"result": {
-				"b64": "bsargaekbhAEFJHaefi"
-				"number": 4
+				"b64": "bsargaekbhAEFJHaefi",
+				"number": 4,
+				"key": "e1d23f53-006c-4731-8357-e506703523a9" //uuid random generado para validacion en posterior insert
 			}
 		},
 		"description": "Book next number in redis and insert it in the pdf and then return its b64",
@@ -160,11 +163,13 @@
 			"b64": "aefsefesf",
 			"atachments":[{
 				"id": "eefrsf",
-				"name": "nota2.txt",
+				"name": "nota2",
+				"extension": "txt",
 				"path": "/"
 			},{
 				"id": "tdhdref",
-				"name": "nota3.xls",
+				"name": "nota3",
+				"extension": "xls",
 				"path": "/"
 			}]
 		},

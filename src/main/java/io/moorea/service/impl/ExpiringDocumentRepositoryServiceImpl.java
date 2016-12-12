@@ -24,16 +24,16 @@ public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRe
 	}
 
 	@Override
-	public boolean addPendingofInsertDocument(UUID docId, int number) {
+	public ExpiringDocument addPendingofInsertDocument(UUID docId, int number) {
 		try {
 			ExpiringDocument auxEd = new ExpiringDocument();
 			auxEd.setParentDocument(docId);
 			auxEd.setNumber(number);
 			RepositoryDatastore.getDatastore().save(auxEd);
-			return true;
+			return auxEd;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 

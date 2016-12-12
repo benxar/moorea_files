@@ -2,6 +2,7 @@ package io.moorea.service;
 
 import java.util.UUID;
 import io.moorea.entity.Document;
+import io.moorea.entity.ExpiringDocument;
 import io.moorea.model.JsonResult;
 
 public interface DocumentRepositoryService {
@@ -16,5 +17,5 @@ public interface DocumentRepositoryService {
 	
 	public JsonResult saveDocumentFile(UUID id,int number, byte[] toSave);
 	
-	public int nextNumber(UUID id);
+	public ExpiringDocument nextNumber(UUID id);
 }

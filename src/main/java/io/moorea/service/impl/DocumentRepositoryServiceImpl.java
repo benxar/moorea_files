@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.moorea.entity.*;
+import io.moorea.model.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.DocumentRepositoryService;
@@ -108,24 +109,27 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public int nextNumber(UUID id) {
-		int result = -1;
+	public ExpiringDocument nextNumber(UUID id) {
+		int nextNumber = -1;
+		ExpiringDocument result = null;
 		try {
 			if (RepositoryDatastore.getDatastore() != null) {
 				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
 				Document auxResult = q.field("id").equal(id).get();
 				if (auxResult != null) {
-					result = auxResult.getFiles().size() + 1;
+					nextNumber = auxResult.getFiles().size() + 1;
 					int lastPendingOfInsertDocument = edService.getLastPendingOfInsertDocument(id);
-					if (result <= lastPendingOfInsertDocument)
-						result = lastPendingOfInsertDocument + 1;
+					if (lastPendingOfInsertDocument == 0)
+						result = edService.addPendingofInsertDocument(id, nextNumber);
+					else
+						result = new ExpiringDocument(ExpiringDocumentErrorCode.FILE_LOCKED);
 				} else
-					result = -1;
+					result = new ExpiringDocument(ExpiringDocumentErrorCode.FILE_NOT_FOUND);
 			} else
-				result = -1;
+				result = new ExpiringDocument(ExpiringDocumentErrorCode.DATASTORE_NOT_AVAILABLE);
 		} catch (Exception e) {
 			e.printStackTrace();
-			result = -1;
+			result = null;
 		}
 		return result;
 	}
