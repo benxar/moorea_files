@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
-import org.mongodb.morphia.Morphia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +18,7 @@ import io.moorea.entity.Office;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.parser.IJsonParser;
+import io.moorea.parser.impl.FilePostRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.parser.request.NewFileRequest;
@@ -28,8 +28,6 @@ import io.moorea.service.PdfService;
 
 @RestController
 public class DocServiceController {
-
-	final Morphia morphia = new Morphia();
 
 	@Autowired
 	private PdfService pdfService;
@@ -148,7 +146,7 @@ public class DocServiceController {
 	}
 
 	@RequestMapping(value = "/api/files/manager/{id}/{number}", method = RequestMethod.GET)
-	public JsonResult managerGetDocumentFileByDocumentIdAndNumber(@PathVariable UUID id, @PathVariable String number)
+	public JsonResult managerGetDocumentFileByDocumentIdAndNumber(@PathVariable UUID id, @PathVariable int number)
 			throws Exception {
 		return documentService.getDocumentFileById(id, number);
 	}
@@ -162,11 +160,9 @@ public class DocServiceController {
 			tempDoc = expDocService.checkExistence(id, number, key);
 			switch (tempDoc) {
 			case NO_ERROR:
-				IJsonParser parser = new NewFileRequestParserImpl();
+				IJsonParser parser = new FilePostRequestParserImpl();
 				FilePostRequest req = (FilePostRequest) parser.parseJson(postPayload);
-				expDocService.deletePendingOfInsertDocument(id, number);
-				
-				result = new JsonResult(true, "Success", "cosas");
+				result = documentService.saveDocumentFile(id, number, key, req);
 				break;
 			case DATASTORE_NOT_AVAILABLE:
 				result = new JsonResult(false, "Datastore not available");

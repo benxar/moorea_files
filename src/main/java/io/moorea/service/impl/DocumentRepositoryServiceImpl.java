@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.mongodb.operation.UpdateOperation;
 
 import io.moorea.entity.*;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
+import io.moorea.parser.request.FilePostRequest;
+import io.moorea.persistence.DocumentFileDAO;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.DocumentRepositoryService;
 import io.moorea.service.ExpiringDocumentRepositoryService;
@@ -18,6 +23,9 @@ import io.moorea.service.ExpiringDocumentRepositoryService;
 public class DocumentRepositoryServiceImpl implements DocumentRepositoryService {
 	@Autowired
 	private ExpiringDocumentRepositoryService edService;
+	
+	@Autowired
+	private DocumentFileDAO fileArchiveWriter;
 
 	@Override
 	public UUID save(Document document) {
@@ -69,7 +77,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public JsonResult getDocumentFileById(UUID id, String fileId) {
+	public JsonResult getDocumentFileById(UUID id, int fileId) {
 		try {
 			if (RepositoryDatastore.getDatastore() != null) {
 				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
@@ -88,13 +96,21 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public JsonResult saveDocumentFile(UUID id, int number, byte[] toSave) {
+	public JsonResult saveDocumentFile(UUID id, int number, UUID key, FilePostRequest req) {
 		JsonResult toReturn = null;
 		try {
 			if (RepositoryDatastore.getDatastore() != null) {
 				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
 				Document auxResult = q.field("id").equal(id).get();
 				if (auxResult != null) {
+					if(fileArchiveWriter.saveFile(id, number, req)){
+						UpdateOperations<Document> uq = RepositoryDatastore.getDatastore().createUpdateOperations(Document.class);
+						DocumentFile toAdd = new DocumentFile(id, number, req.getName(), id.toString() + "_" + number + ".pdf");
+						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
+						edService.deletePendingOfInsertDocument(id, number);
+						toReturn = new JsonResult(true, "Success", toAdd);
+					} else
+						toReturn = new JsonResult(false, "Error while saving file");
 					// TODO: se un update del registro de la lista de
 					// documetfiles en el documento con el path correcto
 				} else

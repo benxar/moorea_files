@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.mongodb.morphia.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.mongodb.WriteResult;
 
 import io.moorea.entity.ExpiringDocument;
@@ -23,11 +22,11 @@ public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRe
 			Query<ExpiringDocument> query = RepositoryDatastore.getDatastore().createQuery(ExpiringDocument.class);
 			ExpiringDocument aux = query.field("parentDocument").equal(docId).field("number").equal(number).get();
 			if (aux != null) {
-				if(aux.getKey()==key)
+				if (aux.getKey().compareTo(key) == 0)
 					result = ExpiringDocumentErrorCode.NO_ERROR;
 				else
 					result = ExpiringDocumentErrorCode.INVALID_KEY;
-			}else
+			} else
 				result = ExpiringDocumentErrorCode.FILE_NOT_FOUND;
 		} catch (Exception e) {
 			e.printStackTrace();

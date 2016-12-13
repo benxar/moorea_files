@@ -1,22 +1,20 @@
 package io.moorea.persistence.impl;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Base64;
 import java.util.UUID;
 
-import org.apache.coyote.http11.filters.BufferedInputFilter;
+import org.springframework.stereotype.Service;
 
 import io.moorea.entity.DocumentFile;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.persistence.DocumentFileDAO;
 
+@Service
 public class DocumentFileDAOImpl implements DocumentFileDAO {
 
 	@Override
@@ -51,7 +49,7 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 				byte[] arr = new byte[(int) f.length()];
 				bis.read(arr);
 				String b64 = Base64.getEncoder().encodeToString(arr);
-				result = new DocumentFile(fileId.toString(), String.valueOf(number), "", b64);
+				result = new DocumentFile(fileId, number, "", b64);
 				bis.close();
 			}
 			return result;
