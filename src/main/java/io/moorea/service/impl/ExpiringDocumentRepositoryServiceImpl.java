@@ -5,7 +5,11 @@ import java.util.UUID;
 import org.mongodb.morphia.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.mongodb.WriteResult;
+
 import io.moorea.entity.ExpiringDocument;
+import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.ExpiringDocumentRepositoryService;
 
@@ -13,14 +17,23 @@ import io.moorea.service.ExpiringDocumentRepositoryService;
 public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRepositoryService {
 
 	@Override
-	public int checkExistence(UUID docId, int number) {
+	public ExpiringDocumentErrorCode checkExistence(UUID docId, int number, UUID key) {
+		ExpiringDocumentErrorCode result = ExpiringDocumentErrorCode.NO_ERROR;
 		try {
 			Query<ExpiringDocument> query = RepositoryDatastore.getDatastore().createQuery(ExpiringDocument.class);
-			return query.field("parentDocument").equal(docId).field("number").equal(number).get().equals(null) ? 0 : 1;
+			ExpiringDocument aux = query.field("parentDocument").equal(docId).field("number").equal(number).get();
+			if (aux != null) {
+				if(aux.getKey()==key)
+					result = ExpiringDocumentErrorCode.NO_ERROR;
+				else
+					result = ExpiringDocumentErrorCode.INVALID_KEY;
+			}else
+				result = ExpiringDocumentErrorCode.FILE_NOT_FOUND;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -1;
+			result = ExpiringDocumentErrorCode.GENERAL_ERROR;
 		}
+		return result;
 	}
 
 	@Override
@@ -52,6 +65,19 @@ public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRe
 			lastNumber = -1;
 		}
 		return lastNumber;
+	}
+
+	@Override
+	public boolean deletePendingOfInsertDocument(UUID docId, int number) {
+		try {
+			Query<ExpiringDocument> query = RepositoryDatastore.getDatastore().createQuery(ExpiringDocument.class);
+			ExpiringDocument auxEd = query.field("parentDocument").equal(docId).order("-number").get();
+			WriteResult result = RepositoryDatastore.getDatastore().delete(auxEd);
+			return result.getN() > 0 ? true : false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

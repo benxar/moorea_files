@@ -135,7 +135,7 @@
 	},
 	{
 		"method": "POST",
-		"path": "/api/files/manager/<id>/<number>",
+		"path": "/api/files/manager/<id>/<number>/<key>",
 		"request": {
 			"b64": "aefsefesf",
 			"name": ""

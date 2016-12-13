@@ -1,10 +1,7 @@
 package io.moorea.rest;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Base64;
 import java.util.UUID;
 
 import org.mongodb.morphia.Morphia;
@@ -15,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mongodb.util.JSON;
-
 import io.moorea.entity.Category;
 import io.moorea.entity.Document;
 import io.moorea.entity.ExpiringDocument;
 import io.moorea.entity.Office;
-import io.moorea.model.ExpiringDocumentErrorCode;
+import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.parser.IJsonParser;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
@@ -96,7 +91,7 @@ public class DocServiceController {
 				default:
 					break;
 				}
-			}else
+			} else
 				result = new JsonResult(false, "General error while retrieving next number");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,21 +153,36 @@ public class DocServiceController {
 		return documentService.getDocumentFileById(id, number);
 	}
 
-	@RequestMapping(value = "/api/files/manager/{id}/{number}", method = RequestMethod.POST)
-	public JsonResult managerPostDocumentFile(@PathVariable UUID id, @PathVariable int number,
+	@RequestMapping(value = "/api/files/manager/{id}/{number}/{key}", method = RequestMethod.POST)
+	public JsonResult managerPostDocumentFile(@PathVariable UUID id, @PathVariable int number, @PathVariable UUID key,
 			@RequestBody String postPayload) {
 		JsonResult result = null;
+		ExpiringDocumentErrorCode tempDoc = ExpiringDocumentErrorCode.NO_ERROR;
 		try {
-			int existsTempDoc = expDocService.checkExistence(id, number);
-			if (existsTempDoc == 1) {
+			tempDoc = expDocService.checkExistence(id, number, key);
+			switch (tempDoc) {
+			case NO_ERROR:
 				IJsonParser parser = new NewFileRequestParserImpl();
 				FilePostRequest req = (FilePostRequest) parser.parseJson(postPayload);
-
+				expDocService.deletePendingOfInsertDocument(id, number);
+				
 				result = new JsonResult(true, "Success", "cosas");
-			} else if (existsTempDoc == 0) {
-				result = new JsonResult(false, "The document number is invalid or has expired");
-			} else
-				result = new JsonResult(false, "Error while searching temporary document number");
+				break;
+			case DATASTORE_NOT_AVAILABLE:
+				result = new JsonResult(false, "Datastore not available");
+				break;
+			case FILE_LOCKED:
+				result = new JsonResult(false, "The file is locked: another document is pending of insert");
+				break;
+			case FILE_NOT_FOUND:
+				result = new JsonResult(false, "The file wasn't found");
+				break;
+			case INVALID_KEY:
+				result = new JsonResult(false, "The key provided is invalid for the given file and number");
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = new JsonResult(false, "There's an error in parameters");

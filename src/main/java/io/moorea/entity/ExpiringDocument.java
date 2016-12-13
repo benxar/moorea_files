@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Transient;
 
-import io.moorea.model.ExpiringDocumentErrorCode;
+import io.moorea.enums.ExpiringDocumentErrorCode;
 
 @Entity("ExpiringDocument")
 public class ExpiringDocument {

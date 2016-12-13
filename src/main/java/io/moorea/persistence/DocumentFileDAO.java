@@ -6,6 +6,8 @@ import io.moorea.entity.DocumentFile;
 import io.moorea.parser.request.FilePostRequest;
 
 public interface DocumentFileDAO {
+	public String path = "C:/data/documentos";
+	
 	public boolean saveFile(UUID fileId, int number, FilePostRequest fpr);
 
 	public DocumentFile retrieveFile(UUID fileId, int number);

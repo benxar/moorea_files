@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.moorea.entity.*;
-import io.moorea.model.ExpiringDocumentErrorCode;
+import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.DocumentRepositoryService;
