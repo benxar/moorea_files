@@ -12,12 +12,15 @@ public class Application extends SpringBootServletInitializer {
 		// SpringApplication.run(Application.class);
 	}
 
+	@Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-       return application.sources(Application.class);
+       return application.sources(applicationClass);
     }
 
     public static void main(String[] args) throws Exception {
-       SpringApplication.run(Application.class, args);
+       SpringApplication.run(applicationClass, args);
     }
+    
+    private static Class<Application> applicationClass = Application.class;
 
 }
