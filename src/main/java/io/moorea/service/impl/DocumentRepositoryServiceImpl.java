@@ -23,7 +23,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	private ExpiringDocumentRepositoryService edService;
 	
 	@Autowired
-	private DocumentFileDAO fileArchiveWriter;
+	private DocumentFileDAO fileArchive;
 
 	@Override
 	public UUID save(Document document) {
@@ -83,8 +83,11 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						.get();
 				if (auxResult != null)
 					for (DocumentFile aux : auxResult.getFiles())
-						if (aux.getDoc_id() == fileId)
+						if (aux.getDoc_id() == fileId){
+							DocumentFile df = fileArchive.retrieveFile(id, fileId);
+							aux.setB64(df.getB64());
 							return new JsonResult(true, "Success", aux);
+						}
 				return new JsonResult(false, "No result was found");
 			} else
 				return new JsonResult(false, "Error while connecting to database");
@@ -101,7 +104,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
 				Document auxResult = q.field("id").equal(id).get();
 				if (auxResult != null) {
-					if(fileArchiveWriter.saveFile(id, number, req)){
+					if(fileArchive.saveFile(id, number, req)){
 						UpdateOperations<Document> uq = RepositoryDatastore.getDatastore().createUpdateOperations(Document.class);
 						DocumentFile toAdd = new DocumentFile(id, number, req.getName(), id.toString() + "_" + number + ".pdf");
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));

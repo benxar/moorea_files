@@ -42,7 +42,7 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 		String fileName = "";
 		try {
 			fileName = fileId.toString() + "_" + number + ".pdf";
-			File f = new File(fileName);
+			File f = new File(path + "/" + fileName);
 			if (f.exists()) {
 				FileInputStream fis = new FileInputStream(f);
 				BufferedInputStream bis = new BufferedInputStream(fis);
