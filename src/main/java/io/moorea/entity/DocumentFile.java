@@ -39,10 +39,10 @@ public class DocumentFile {
 		this.path = path;
 	}
 	public String getB64() {
-		return path;
+		return b64;
 	}
 	public void setB64(String b64) {
-		this.path = b64;
+		this.b64 = b64;
 	}
 
 	public DocumentFile(UUID parent, int doc_id, String name, String path) {
