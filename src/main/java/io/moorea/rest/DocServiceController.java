@@ -18,10 +18,14 @@ import io.moorea.entity.Office;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
 import io.moorea.parser.IJsonParser;
+import io.moorea.parser.impl.ConvertToPdfRequestParserImpl;
 import io.moorea.parser.impl.FilePostRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
+import io.moorea.parser.impl.ValidatePdfRequestParserImpl;
+import io.moorea.parser.request.ConvertToPdfRequest;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.parser.request.NewFileRequest;
+import io.moorea.parser.request.ValidatePdfRequest;
 import io.moorea.service.DocumentRepositoryService;
 import io.moorea.service.ExpiringDocumentRepositoryService;
 import io.moorea.service.PdfService;
@@ -153,7 +157,7 @@ public class DocServiceController {
 
 	@RequestMapping(value = "/api/files/manager/{id}/{number}/{key}", method = RequestMethod.POST)
 	public JsonResult managerPostDocumentFile(@PathVariable UUID id, @PathVariable int number, @PathVariable UUID key,
-			@RequestBody String postPayload) {
+			@RequestBody String postPayload) throws Exception {
 		JsonResult result = null;
 		ExpiringDocumentErrorCode tempDoc = ExpiringDocumentErrorCode.NO_ERROR;
 		try {
@@ -185,5 +189,47 @@ public class DocServiceController {
 		}
 		return result;
 	}
-
+	
+	@RequestMapping(value="/api/files/helpers/atach_doc_to_pdf",method=RequestMethod.POST)
+	public JsonResult attachToPdf(@RequestBody String postPayload) throws Exception{
+		return null;
+	}
+	
+	@RequestMapping(value = "/api/files/helpers/convert_to_pdf",method=RequestMethod.POST)
+	public JsonResult convertToPdf(@RequestBody String postPayload) throws Exception{
+		IJsonParser parser = new ConvertToPdfRequestParserImpl();
+		ConvertToPdfRequest req=null;
+		InputStream is = null;
+		try {
+			req = (ConvertToPdfRequest) parser.parseJson(postPayload);
+			is = new ByteArrayInputStream(req.getHtlm().getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (req != null && is !=null) 
+			return pdfService.htmlToPdf(is);
+		else
+			return new JsonResult(false, "There's an error in parameters");
+	}
+	
+	@RequestMapping(value = "/api/files/helpers/validations/type_of_file", method=RequestMethod.POST)
+	public JsonResult typeOfFile(@RequestBody String postPayload) throws Exception{
+		IJsonParser parser = new ValidatePdfRequestParserImpl();
+		ValidatePdfRequest req=null;
+		try {
+			req = (ValidatePdfRequest) parser.parseJson(postPayload);
+			if (req != null) 
+				return pdfService.validatePdfFormat(req.getB64());
+			else
+				return new JsonResult(false, "There's an error in parameters");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new JsonResult(false, "Error while validating file");
+		}
+	}
+	
+	@RequestMapping(value = "/api/files/helpers/validations/signers", method=RequestMethod.POST)
+	public JsonResult getSigners(@RequestBody String postPayload) throws Exception{
+		return null;
+	}
 }

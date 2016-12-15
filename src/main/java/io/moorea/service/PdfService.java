@@ -9,4 +9,6 @@ public interface PdfService {
 	public JsonResult htmlToPdf(InputStream html);
 	
 	public JsonResult validatePdfFormat(String string);
+	
+	public JsonResult addDocument(InputStream html);
 }

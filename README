@@ -165,12 +165,12 @@
 				"id": "eefrsf",
 				"name": "nota2",
 				"extension": "txt",
-				"path": "/"
+				//"path": "/"
 			},{
 				"id": "tdhdref",
 				"name": "nota3",
 				"extension": "xls",
-				"path": "/"
+				//"path": "/"
 			}]
 		},
 		"response": {
@@ -184,7 +184,7 @@
 			}
 		},
 		"description": "Atach doc to a pdf",
-		"logic": "Atach, save it, and return hash and path"
+		"logic": "Atach, and return hash"
 	},
 	{
 		"method": "POST",

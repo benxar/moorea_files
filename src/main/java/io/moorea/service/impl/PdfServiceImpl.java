@@ -18,7 +18,8 @@ import io.moorea.service.PdfService;
 
 @Service
 public class PdfServiceImpl implements PdfService {
-
+	
+	@Override
 	public JsonResult htmlToPdf(InputStream html) {		
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,16 +42,17 @@ public class PdfServiceImpl implements PdfService {
 			e.printStackTrace();
 			return new JsonResult(false, e.getMessage());
 		}
-
 	}
 	
-	
+	@Override
 	public JsonResult validatePdfFormat(String b64Pdf) {		
-		try {
-			
-			PdfReader pdfReader = new PdfReader(Base64.decode(b64Pdf));  
+		boolean encripted = false;
+		try {	
+			PdfReader pdfReader = new PdfReader(Base64.decode(b64Pdf));
+			if(pdfReader.isEncrypted())
+				encripted = true;
 		    //String textFromPdfFilePageOne = PdfTextExtractor.getTextFromPage( pdfReader, 1 ); 
-			return new JsonResult(true, "Ok", pdfReader);
+			return new JsonResult(true, "Success", encripted);
 		} catch (Exception e) {			
 			e.printStackTrace();
 			return new JsonResult(false, "El archivo enviado no se corresponde con el formato tipo PDF");
@@ -58,6 +60,7 @@ public class PdfServiceImpl implements PdfService {
 
 	}
 	
+	@Override
 	public JsonResult addDocument(InputStream html) {		
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -80,7 +83,6 @@ public class PdfServiceImpl implements PdfService {
 			e.printStackTrace();
 			return new JsonResult(false, e.getMessage());
 		}
-
 	}
 	
 }
