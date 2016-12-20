@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.mongodb.WriteResult;
 
 import io.moorea.entity.ExpiringDocument;
-import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.ExpiringDocumentRepositoryService;
 

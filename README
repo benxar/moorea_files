@@ -1,6 +1,7 @@
 //TODO: agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
 //TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
-//TODO> agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
+//TODO: agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
+//TODO: agregar endpoint para buscar expediente segun categoria, oficina y año
 [
 	{
 		"method": "POST",
