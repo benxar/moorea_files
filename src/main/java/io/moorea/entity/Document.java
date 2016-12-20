@@ -21,6 +21,7 @@ public class Document {
 	private int year;
 	private int updates;
 	private Date lastUpdate;
+	private String prefix;
 	@Embedded
 	private List<DocumentFile> files = new ArrayList<>();
 	
@@ -74,5 +75,11 @@ public class Document {
 	}
 	public void setFiles(List<DocumentFile> files) {
 		this.files = files;
+	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }

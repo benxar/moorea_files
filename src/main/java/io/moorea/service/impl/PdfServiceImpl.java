@@ -1,11 +1,12 @@
 package io.moorea.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
@@ -38,9 +39,9 @@ public class PdfServiceImpl implements PdfService {
 			document.close();
 
 			// tmp
-			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
-			fos.write(baos.toByteArray());
-			fos.close();
+			// FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
+			// fos.write(baos.toByteArray());
+			// fos.close();
 
 			return new JsonResult(true, "Ok", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
@@ -79,9 +80,9 @@ public class PdfServiceImpl implements PdfService {
 			document.close();
 
 			// tmp
-			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
-			fos.write(baos.toByteArray());
-			fos.close();
+			// FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
+			// fos.write(baos.toByteArray());
+			// fos.close();
 
 			return new JsonResult(true, "Ok", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
@@ -103,17 +104,21 @@ public class PdfServiceImpl implements PdfService {
 			AcroFields af = reader.getAcroFields();
 			ArrayList<String> names = af.getSignatureNames();
 			for (String name : names) {
-				//System.out.println("Signature name: " + name);
-				//System.out.println("Signature covers whole document: " + af.signatureCoversWholeDocument(name));
-				//System.out.println("Document revision: " + af.getRevision(name) + " of " + af.getTotalRevisions());
+				// System.out.println("Signature name: " + name);
+				// System.out.println("Signature covers whole document: " +
+				// af.signatureCoversWholeDocument(name));
+				// System.out.println("Document revision: " +
+				// af.getRevision(name) + " of " + af.getTotalRevisions());
 				Security.addProvider(new BouncyCastleProvider());
-				//InputStream ip = af.extractRevision(name);
+				// InputStream ip = af.extractRevision(name);
 				PdfPKCS7 pk = af.verifySignature(name);
-				//Calendar cal = pk.getSignDate();
-				//System.out.println(new Date(pk.getSignDate().getTimeInMillis()));
-				//Certificate[] pkc = pk.getCertificates();
-				//System.out.println("Subject: " + CertificateInfo.getSubjectFields(pk.getSigningCertificate()));
-				//System.out.println("Revision modified: " + !pk.verify());
+				// Calendar cal = pk.getSignDate();
+				// System.out.println(new
+				// Date(pk.getSignDate().getTimeInMillis()));
+				// Certificate[] pkc = pk.getCertificates();
+				// System.out.println("Subject: " +
+				// CertificateInfo.getSubjectFields(pk.getSigningCertificate()));
+				// System.out.println("Revision modified: " + !pk.verify());
 				CertificateSubject cs = new CertificateSubject(pk.getSigningCertificate());
 				signers.add(new Signer(name, cs));
 			}
@@ -122,6 +127,23 @@ public class PdfServiceImpl implements PdfService {
 			signers = null;
 		}
 		return signers;
+	}
+
+	@Override
+	public UUID getKey(String b64Pdf) {
+		PdfReader reader = null;
+		UUID result = null;
+		try {
+			reader = new PdfReader(Base64.decode(b64Pdf));
+			Map<String, String> auxInfo = reader.getInfo();
+			if (auxInfo != null) {
+				result = UUID.fromString(auxInfo.get("internalkey"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = null;
+		}
+		return result;
 	}
 
 }

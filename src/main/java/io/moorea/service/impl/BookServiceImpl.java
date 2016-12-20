@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,7 @@ import io.moorea.util.FormatUtil;
 @Service
 public class BookServiceImpl implements BookService {
 	
-	@Override
-	public JsonResult getNextNumber(String b64, int number) {	
+	public JsonResult getNextNumber(String b64, int number, String key) {	
 		BufferedImage image = null;
 		Image pdfImage = null;
 		try {
@@ -41,7 +42,9 @@ public class BookServiceImpl implements BookService {
 			//Add image number to PDF
 			//PdfReader pdfReader =  (PdfReader) object;
 			PdfReader pdfReader = new PdfReader(Base64.decode(b64));
-			ByteArrayOutputStream baos = FormatUtil.addImageToPDF(pdfReader,pdfImage); 
+			Map<String,String> infKey = new HashMap<String,String>();
+			infKey.put("internalkey", key);
+			ByteArrayOutputStream baos = FormatUtil.addImageToPDF(pdfReader,pdfImage,infKey); 
 			//tmp
 			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
 			fos.write(baos.toByteArray());

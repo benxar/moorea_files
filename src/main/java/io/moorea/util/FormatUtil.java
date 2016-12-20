@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -46,12 +47,17 @@ public class FormatUtil {
 		return baos;
 	}
 
-	public static ByteArrayOutputStream addImageToPDF(PdfReader reader, Image img)
+	public static ByteArrayOutputStream addImageToPDF(PdfReader reader, Image img, Map<String,String> info)
 			throws IOException, DocumentException {
 		int n = reader.getNumberOfPages();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PdfStamper stamper = new PdfStamper(reader, baos);
+		if (info != null) {
+			Map<String,String> auxInfo = reader.getInfo();
+			auxInfo.putAll(info);
+			stamper.setMoreInfo(auxInfo);
+		}
 		float x = 10;
 		float y = 650;
 		float w = img.getWidth();

@@ -86,7 +86,7 @@ public class DocServiceController {
 		try {
 			IJsonParser parser = new NextNumberRequestParserImpl();
 			NextNumberRequest req = (NextNumberRequest) parser.parseJson(postPayload);
-			if(pdfService.validatePdfFormat(req.getB64()).getSuccess()){
+			if (pdfService.validatePdfFormat(req.getB64()).getSuccess()) {
 				ExpiringDocument nextDocument = documentService.nextNumber(id);
 				if (nextDocument != null) {
 					switch (nextDocument.getErrorCode()) {
@@ -100,13 +100,12 @@ public class DocServiceController {
 						result = new JsonResult(false, "The file wasn't found");
 						break;
 					case NO_ERROR:
-						result = new JsonResult(true, "Success", nextDocument);
 						JsonResult auxRes = null;
-						auxRes = bookService.getNextNumber(req.getB64(), nextDocument.getNumber());
+						auxRes = bookService.getNextNumber(req.getB64(), nextDocument.getNumber(),
+								nextDocument.getKey().toString());
 						if (auxRes.getSuccess()) {
-							ExpiringDocument auxED = (ExpiringDocument) result.getObject();
-							auxED.setB64(auxRes.getObject().toString());
-							result.setObject(auxED);
+							nextDocument.setB64(auxRes.getObject().toString());
+							result = new JsonResult(true, "Success", nextDocument);
 						}
 						break;
 					default:
@@ -114,7 +113,7 @@ public class DocServiceController {
 					}
 				} else
 					result = new JsonResult(false, "General error while retrieving next number");
-			}else
+			} else
 				result = new JsonResult(false, "The file must be a pdf");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -176,34 +175,19 @@ public class DocServiceController {
 		return documentService.getDocumentFileById(id, number);
 	}
 
-	@RequestMapping(value = "/api/files/manager/{id}/{number}/{key}", method = RequestMethod.POST)
-	public JsonResult managerPostDocumentFile(@PathVariable UUID id, @PathVariable int number, @PathVariable UUID key,
-			@RequestBody String postPayload) throws Exception {
+	@RequestMapping(value = "/api/files/manager", method = RequestMethod.POST)
+	public JsonResult managerPostDocumentFile(@RequestBody String postPayload) throws Exception {
 		JsonResult result = null;
-		ExpiringDocumentErrorCode tempDoc = ExpiringDocumentErrorCode.NO_ERROR;
+		ExpiringDocument tempDoc = null;
 		try {
-			tempDoc = expDocService.checkExistence(id, number, key);
-			switch (tempDoc) {
-			case NO_ERROR:
-				IJsonParser parser = new FilePostRequestParserImpl();
-				FilePostRequest req = (FilePostRequest) parser.parseJson(postPayload);
-				result = documentService.saveDocumentFile(id, number, key, req);
-				break;
-			case DATASTORE_NOT_AVAILABLE:
-				result = new JsonResult(false, "Datastore not available");
-				break;
-			case FILE_LOCKED:
-				result = new JsonResult(false, "The file is locked: another document is pending of insert");
-				break;
-			case FILE_NOT_FOUND:
-				result = new JsonResult(false, "The file wasn't found");
-				break;
-			case INVALID_KEY:
-				result = new JsonResult(false, "The key provided is invalid for the given file and number");
-				break;
-			default:
-				break;
-			}
+			IJsonParser parser = new FilePostRequestParserImpl();
+			FilePostRequest req = (FilePostRequest) parser.parseJson(postPayload);
+			UUID key = pdfService.getKey(req.getB64());
+			tempDoc = expDocService.checkExistence(key);
+			if (tempDoc != null) {
+				result = documentService.saveDocumentFile(tempDoc.getParentDocument(), tempDoc.getNumber(), key, req);
+			}else
+				result = new JsonResult(false, "The document was not booked for the given file or the key is invalid");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = new JsonResult(false, "There's an error in parameters");
@@ -240,7 +224,7 @@ public class DocServiceController {
 		try {
 			req = (ValidatePdfRequest) parser.parseJson(postPayload);
 			if (req != null)
-				return new JsonResult(true,"Success", pdfService.validatePdfFormat(req.getB64()));
+				return new JsonResult(true, "Success", pdfService.validatePdfFormat(req.getB64()));
 			else
 				return new JsonResult(false, "There's an error in parameters");
 		} catch (Exception e) {

@@ -16,21 +16,17 @@ import io.moorea.service.ExpiringDocumentRepositoryService;
 public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRepositoryService {
 
 	@Override
-	public ExpiringDocumentErrorCode checkExistence(UUID docId, int number, UUID key) {
-		ExpiringDocumentErrorCode result = ExpiringDocumentErrorCode.NO_ERROR;
+	public ExpiringDocument checkExistence(UUID key) {
+		ExpiringDocument result = null;
 		try {
 			Query<ExpiringDocument> query = RepositoryDatastore.getDatastore().createQuery(ExpiringDocument.class);
-			ExpiringDocument aux = query.field("parentDocument").equal(docId).field("number").equal(number).get();
+			ExpiringDocument aux = query.field("key").equal(key).get();
 			if (aux != null) {
-				if (aux.getKey().compareTo(key) == 0)
-					result = ExpiringDocumentErrorCode.NO_ERROR;
-				else
-					result = ExpiringDocumentErrorCode.INVALID_KEY;
-			} else
-				result = ExpiringDocumentErrorCode.FILE_NOT_FOUND;
+				result = aux;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			result = ExpiringDocumentErrorCode.GENERAL_ERROR;
+			result = null;
 		}
 		return result;
 	}

@@ -17,7 +17,8 @@ public class NewFileRequestParserImpl implements IJsonParser {
 			String type = obj.get("type").getAsString();
 			JsonObject header = obj.get("header").getAsJsonObject();
 			///parseo de año
-			int anio = Integer.parseInt(header.get("year").getAsString());
+			int anio = header.get("year").getAsInt();
+			String prefix = header.get("prefix").getAsString();
 			///parseo de oficina
 			JsonObject office = header.get("office").getAsJsonObject();
 			String idOficina = office.get("id").getAsString();
@@ -26,7 +27,7 @@ public class NewFileRequestParserImpl implements IJsonParser {
 			JsonObject category = header.get("category").getAsJsonObject();
 			String idCategoria = category.get("id").getAsString();
 			String textoCategoria = category.get("text").getAsString();
-			NewFileRequest nfr = new NewFileRequest(type, idOficina, textoOficina, idCategoria, textoCategoria, anio);
+			NewFileRequest nfr = new NewFileRequest(type, idOficina, textoOficina, idCategoria, textoCategoria, anio, prefix);
 			return nfr;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -9,7 +9,7 @@ public interface ExpiringDocumentRepositoryService {
 	
 	int getLastPendingOfInsertDocument(UUID docId);
 	
-	ExpiringDocumentErrorCode checkExistence(UUID docId,int number, UUID key);
+	ExpiringDocument checkExistence(UUID key);
 	
 	ExpiringDocument addPendingofInsertDocument(UUID docId,int number);
 	
