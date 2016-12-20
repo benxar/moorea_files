@@ -1,7 +1,9 @@
 package io.moorea.service;
 
 import java.io.InputStream;
+import java.util.List;
 
+import io.moorea.entity.Signer;
 import io.moorea.model.JsonResult;
 
 public interface PdfService {
@@ -11,4 +13,6 @@ public interface PdfService {
 	public JsonResult validatePdfFormat(String string);
 	
 	public JsonResult addDocument(InputStream html);
+	
+	public List<Signer> getSigners(String b64Pdf);
 }

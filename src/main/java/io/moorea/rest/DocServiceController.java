@@ -2,6 +2,8 @@ package io.moorea.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +17,19 @@ import io.moorea.entity.Category;
 import io.moorea.entity.Document;
 import io.moorea.entity.ExpiringDocument;
 import io.moorea.entity.Office;
+import io.moorea.entity.Signer;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 import io.moorea.model.JsonResult;
+import io.moorea.model.JsonResultList;
 import io.moorea.parser.IJsonParser;
 import io.moorea.parser.impl.ConvertToPdfRequestParserImpl;
 import io.moorea.parser.impl.FilePostRequestParserImpl;
+import io.moorea.parser.impl.GetSignersRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
 import io.moorea.parser.impl.ValidatePdfRequestParserImpl;
 import io.moorea.parser.request.ConvertToPdfRequest;
 import io.moorea.parser.request.FilePostRequest;
+import io.moorea.parser.request.GetSignersRequest;
 import io.moorea.parser.request.NewFileRequest;
 import io.moorea.parser.request.ValidatePdfRequest;
 import io.moorea.service.DocumentRepositoryService;
@@ -189,16 +195,16 @@ public class DocServiceController {
 		}
 		return result;
 	}
-	
-	@RequestMapping(value="/api/files/helpers/atach_doc_to_pdf",method=RequestMethod.POST)
-	public JsonResult attachToPdf(@RequestBody String postPayload) throws Exception{
+
+	@RequestMapping(value = "/api/files/helpers/atach_doc_to_pdf", method = RequestMethod.POST)
+	public JsonResult attachToPdf(@RequestBody String postPayload) throws Exception {
 		return null;
 	}
-	
-	@RequestMapping(value = "/api/files/helpers/convert_to_pdf",method=RequestMethod.POST)
-	public JsonResult convertToPdf(@RequestBody String postPayload) throws Exception{
+
+	@RequestMapping(value = "/api/files/helpers/convert_to_pdf", method = RequestMethod.POST)
+	public JsonResult convertToPdf(@RequestBody String postPayload) throws Exception {
 		IJsonParser parser = new ConvertToPdfRequestParserImpl();
-		ConvertToPdfRequest req=null;
+		ConvertToPdfRequest req = null;
 		InputStream is = null;
 		try {
 			req = (ConvertToPdfRequest) parser.parseJson(postPayload);
@@ -206,19 +212,19 @@ public class DocServiceController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (req != null && is !=null) 
+		if (req != null && is != null)
 			return pdfService.htmlToPdf(is);
 		else
 			return new JsonResult(false, "There's an error in parameters");
 	}
-	
-	@RequestMapping(value = "/api/files/helpers/validations/type_of_file", method=RequestMethod.POST)
-	public JsonResult typeOfFile(@RequestBody String postPayload) throws Exception{
+
+	@RequestMapping(value = "/api/files/helpers/validations/type_of_file", method = RequestMethod.POST)
+	public JsonResult typeOfFile(@RequestBody String postPayload) throws Exception {
 		IJsonParser parser = new ValidatePdfRequestParserImpl();
-		ValidatePdfRequest req=null;
+		ValidatePdfRequest req = null;
 		try {
 			req = (ValidatePdfRequest) parser.parseJson(postPayload);
-			if (req != null) 
+			if (req != null)
 				return pdfService.validatePdfFormat(req.getB64());
 			else
 				return new JsonResult(false, "There's an error in parameters");
@@ -227,9 +233,27 @@ public class DocServiceController {
 			return new JsonResult(false, "Error while validating file");
 		}
 	}
-	
-	@RequestMapping(value = "/api/files/helpers/validations/signers", method=RequestMethod.POST)
-	public JsonResult getSigners(@RequestBody String postPayload) throws Exception{
-		return null;
+
+	@RequestMapping(value = "/api/files/helpers/validations/signers", method = RequestMethod.POST)
+	public JsonResultList getSigners(@RequestBody String postPayload) throws Exception {
+		JsonResultList toReturn = null;
+		GetSignersRequest req = null;
+		List<Signer> signers = null;
+		IJsonParser parser = new GetSignersRequestParserImpl();
+		try {
+			req = (GetSignersRequest) parser.parseJson(postPayload);
+			if (req != null)
+				signers = pdfService.getSigners(req.getB64());
+			else
+				toReturn = new JsonResultList(false, "There's an error in parameters", null);
+			if (signers != null)
+				toReturn = new JsonResultList(true, "Success", new ArrayList<Object>(signers), (long)signers.size());
+			else
+				toReturn = new JsonResultList(false, "There was an error while fetching the signers of the document", null);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			toReturn = new JsonResultList(false, "Unexpected error while fetching signers", null);
+		}
+		return toReturn;
 	}
 }

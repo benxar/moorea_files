@@ -183,7 +183,7 @@
 				}
 			}
 		},
-		"description": "Atach doc to a pdf",
+		"description": "Atach doc to a pdf",// agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
 		"logic": "Atach, and return hash"
 	},
 	{
