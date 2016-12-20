@@ -26,12 +26,15 @@ import io.moorea.parser.impl.ConvertToPdfRequestParserImpl;
 import io.moorea.parser.impl.FilePostRequestParserImpl;
 import io.moorea.parser.impl.GetSignersRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
+import io.moorea.parser.impl.NextNumberRequestParserImpl;
 import io.moorea.parser.impl.ValidatePdfRequestParserImpl;
 import io.moorea.parser.request.ConvertToPdfRequest;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.parser.request.GetSignersRequest;
 import io.moorea.parser.request.NewFileRequest;
+import io.moorea.parser.request.NextNumberRequest;
 import io.moorea.parser.request.ValidatePdfRequest;
+import io.moorea.service.BookService;
 import io.moorea.service.DocumentRepositoryService;
 import io.moorea.service.ExpiringDocumentRepositoryService;
 import io.moorea.service.PdfService;
@@ -42,8 +45,8 @@ public class DocServiceController {
 	@Autowired
 	private PdfService pdfService;
 
-	// @Autowired
-	// private BookService bookService;
+	@Autowired
+	private BookService bookService;
 
 	@Autowired
 	private DocumentRepositoryService documentService;
@@ -81,26 +84,38 @@ public class DocServiceController {
 		 */
 		JsonResult result = null;
 		try {
-			ExpiringDocument nextDocument = documentService.nextNumber(id);
-			if (nextDocument != null) {
-				switch (nextDocument.getErrorCode()) {
-				case DATASTORE_NOT_AVAILABLE:
-					result = new JsonResult(false, "Datastore not available");
-					break;
-				case FILE_LOCKED:
-					result = new JsonResult(false, "The file is locked: another document is pending of insert");
-					break;
-				case FILE_NOT_FOUND:
-					result = new JsonResult(false, "The file wasn't found");
-					break;
-				case NO_ERROR:
-					result = new JsonResult(true, "Success", nextDocument);
-					break;
-				default:
-					break;
-				}
-			} else
-				result = new JsonResult(false, "General error while retrieving next number");
+			IJsonParser parser = new NextNumberRequestParserImpl();
+			NextNumberRequest req = (NextNumberRequest) parser.parseJson(postPayload);
+			if(pdfService.validatePdfFormat(req.getB64()).getSuccess()){
+				ExpiringDocument nextDocument = documentService.nextNumber(id);
+				if (nextDocument != null) {
+					switch (nextDocument.getErrorCode()) {
+					case DATASTORE_NOT_AVAILABLE:
+						result = new JsonResult(false, "Datastore not available");
+						break;
+					case FILE_LOCKED:
+						result = new JsonResult(false, "The file is locked: another document is pending of insert");
+						break;
+					case FILE_NOT_FOUND:
+						result = new JsonResult(false, "The file wasn't found");
+						break;
+					case NO_ERROR:
+						result = new JsonResult(true, "Success", nextDocument);
+						JsonResult auxRes = null;
+						auxRes = bookService.getNextNumber(req.getB64(), nextDocument.getNumber());
+						if (auxRes.getSuccess()) {
+							ExpiringDocument auxED = (ExpiringDocument) result.getObject();
+							auxED.setB64(auxRes.getObject().toString());
+							result.setObject(auxED);
+						}
+						break;
+					default:
+						break;
+					}
+				} else
+					result = new JsonResult(false, "General error while retrieving next number");
+			}else
+				result = new JsonResult(false, "The file must be a pdf");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = new JsonResult(false, "There's an error in parameters");
@@ -225,7 +240,7 @@ public class DocServiceController {
 		try {
 			req = (ValidatePdfRequest) parser.parseJson(postPayload);
 			if (req != null)
-				return pdfService.validatePdfFormat(req.getB64());
+				return new JsonResult(true,"Success", pdfService.validatePdfFormat(req.getB64()));
 			else
 				return new JsonResult(false, "There's an error in parameters");
 		} catch (Exception e) {
@@ -247,9 +262,10 @@ public class DocServiceController {
 			else
 				toReturn = new JsonResultList(false, "There's an error in parameters", null);
 			if (signers != null)
-				toReturn = new JsonResultList(true, "Success", new ArrayList<Object>(signers), (long)signers.size());
+				toReturn = new JsonResultList(true, "Success", new ArrayList<Object>(signers), (long) signers.size());
 			else
-				toReturn = new JsonResultList(false, "There was an error while fetching the signers of the document", null);			
+				toReturn = new JsonResultList(false, "There was an error while fetching the signers of the document",
+						null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			toReturn = new JsonResultList(false, "Unexpected error while fetching signers", null);

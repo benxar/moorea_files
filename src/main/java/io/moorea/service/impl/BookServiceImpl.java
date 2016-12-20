@@ -21,15 +21,14 @@ import io.moorea.util.FormatUtil;
 
 @Service
 public class BookServiceImpl implements BookService {
-
 	
-	
-	public JsonResult getNextNumber(Object object, String number) {
-		//Create Image Number		
-		BufferedImage image = FormatUtil.convertTextToGraphic(number, new Font("Arial", Font.BOLD, 26));
-		
+	@Override
+	public JsonResult getNextNumber(String b64, int number) {	
+		BufferedImage image = null;
 		Image pdfImage = null;
 		try {
+			//Create Image Number
+			image = FormatUtil.convertTextToGraphic(String.valueOf(number), new Font("Arial", Font.BOLD, 26));
 			pdfImage = Image.getInstance( image, Color.white);
 		} catch (BadElementException e1) {
 			e1.printStackTrace();
@@ -38,15 +37,15 @@ public class BookServiceImpl implements BookService {
 			e1.printStackTrace();
 			return new JsonResult(false, e1.getMessage());
 		}
-		//Add image number to PDF
-		PdfReader pdfReader =  (PdfReader) object;
-		try {	
+		try {
+			//Add image number to PDF
+			//PdfReader pdfReader =  (PdfReader) object;
+			PdfReader pdfReader = new PdfReader(Base64.decode(b64));
 			ByteArrayOutputStream baos = FormatUtil.addImageToPDF(pdfReader,pdfImage); 
 			//tmp
 			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
 			fos.write(baos.toByteArray());
 			fos.close();
-			
 			return new JsonResult(true,"Ok", Base64.encodeBytes(baos.toByteArray()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -55,10 +54,6 @@ public class BookServiceImpl implements BookService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return new JsonResult(false, "Error");
-	}
-
-	
-	
+	}	
 }

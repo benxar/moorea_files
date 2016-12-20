@@ -1,8 +1,11 @@
+//TODO: agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
+//TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
+//TODO> agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
 [
 	{
 		"method": "POST",
 		"path": "/api/files/manager",
-		"request": {
+		"request": {//TODO: validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
 			"type": "book",
 			"header": {
 				"office": {"id": "H00000001", "text": "Dirección General"},
@@ -116,11 +119,14 @@
 	{
 		//nota: cuando piden numero siguiente, el expediente se bloquea y no es posible insertar nuevos documentos y 
 		//	esta funcion devolvera error mientras este bloqueado
+		//TODO: agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+		//TODO: validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
+		//TODO: agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
 		"method": "POST",
 		"path": "/api/files/next_number/<id>",
 		"request": {
 			"b64": "aefsefesf",
-			"file_id": "file_1"
+			//"param_text": "file_1"
 		},
 		"response": {
 			"success": true,
@@ -183,7 +189,7 @@
 				}
 			}
 		},
-		"description": "Atach doc to a pdf",// agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+		"description": "Atach doc to a pdf",
 		"logic": "Atach, and return hash"
 	},
 	{

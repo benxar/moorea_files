@@ -24,6 +24,8 @@ public class ExpiringDocument {
 	private Date expiringDate;
 	@Transient
 	private ExpiringDocumentErrorCode errorCode;
+	@Transient
+	private String b64;
 	
 	public ExpiringDocument(){
 		expiringDate = new Date(System.currentTimeMillis());
@@ -65,5 +67,11 @@ public class ExpiringDocument {
 	}
 	private void setErrorCode(ExpiringDocumentErrorCode errorCode) {
 		this.errorCode = errorCode;
+	}
+	public String getB64() {
+		return b64;
+	}
+	public void setB64(String b64) {
+		this.b64 = b64;
 	}
 }

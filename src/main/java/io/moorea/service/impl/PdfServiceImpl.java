@@ -16,7 +16,6 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64;
-import com.itextpdf.text.pdf.security.CertificateInfo;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
