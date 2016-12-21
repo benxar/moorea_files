@@ -215,7 +215,11 @@ public class DocServiceController {
 		try {
 			IJsonParser parser = new AttachToPdfRequestParserImpl();
 			AttachToPdfRequest req = (AttachToPdfRequest) parser.parseJson(postPayload);
-			result = pdfService.addDocument(req);
+			JsonResult isPdf = pdfService.validatePdfFormat(req.getB64());
+			if (isPdf.getSuccess())
+				result = pdfService.addDocument(req,(boolean)isPdf.getObject());
+			else
+				result = new JsonResult(false, "The file must be a pdf");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = new JsonResult(false, "There's an error in parameters");

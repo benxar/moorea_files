@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
@@ -75,8 +76,13 @@ public class PdfServiceImpl implements PdfService {
 	}
 
 	@Override
-	public JsonResult addDocument(AttachToPdfRequest req) {
+	public JsonResult addDocument(AttachToPdfRequest req, boolean encrypted) {
 		try {
+			/*if(encrypted){
+				PdfDocument nDoc = new PdfDocument();
+				
+				nDoc.addWriter(writer);
+			}*/
 			PdfReader reader = new PdfReader(Base64.decode(req.getB64()));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PdfStamper stamper = new PdfStamper(reader, baos);
@@ -86,9 +92,9 @@ public class PdfServiceImpl implements PdfService {
 			}
 			stamper.close();
 			// tmp
-			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
-			fos.write(baos.toByteArray());
-			fos.close();
+			//FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
+			//fos.write(baos.toByteArray());
+			//fos.close();
 			return new JsonResult(true, "Success", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
 			e.printStackTrace();

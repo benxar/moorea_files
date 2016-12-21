@@ -15,7 +15,7 @@ public interface PdfService {
 
 	public JsonResult validatePdfFormat(String string);
 
-	public JsonResult addDocument(AttachToPdfRequest req);
+	public JsonResult addDocument(AttachToPdfRequest req, boolean encrypted);
 
 	public List<Signer> getSigners(String b64Pdf);
 
