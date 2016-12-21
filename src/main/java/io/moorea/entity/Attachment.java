@@ -6,7 +6,7 @@ import org.mongodb.morphia.annotations.Embedded;
 public class Attachment {
 	private String id;
 	private String name;
-	private String path;
+	private String extension;
 	public String getId() {
 		return id;
 	}
@@ -19,17 +19,17 @@ public class Attachment {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getPath() {
-		return path;
+	public String getExtension() {
+		return extension;
 	}
-	public void setPath(String path) {
-		this.path = path;
+	public void setExtension(String path) {
+		this.extension = path;
 	}
-	public Attachment(String id, String name, String path) {
+	public Attachment(String id, String name, String extension) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.path = path;
+		this.extension = extension;
 	}
 	public Attachment() {
 		super();

@@ -1,6 +1,6 @@
 //TODO: agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
 //TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
-//TODO: agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
+//DONE => agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
 //TODO: agregar endpoint para buscar expediente segun categoria, oficina y año
 [
 	{
@@ -23,6 +23,19 @@
 		},
 		"description": "Create a new file (could be a file or a book)",
 		"logic": "Creates a new file on the files mongo collection"
+	},
+	{//nota: agregado recientemente por pedido de juan
+		"method": "GET",
+		"path": "/api/files/manager/<officeId>/<categoryId>/<year>",//officeId=string;categoryId=string;year=int
+		"response": {
+			"success": true,
+			"result":
+				{
+					"id": "wefafkhsejhfgefh34@#$@#4"
+				}
+		},
+		"description": "Finds a single document given the officeid, the categoryid and the year",
+		"logic": "Only returns the id"
 	},
 	{
 		"method": "GET",

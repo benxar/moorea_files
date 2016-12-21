@@ -21,7 +21,7 @@ import io.moorea.service.ExpiringDocumentRepositoryService;
 public class DocumentRepositoryServiceImpl implements DocumentRepositoryService {
 	@Autowired
 	private ExpiringDocumentRepositoryService edService;
-	
+
 	@Autowired
 	private DocumentFileDAO fileArchive;
 
@@ -74,6 +74,26 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 		return toReturn;
 	}
 
+	public JsonResult searchDocument(String officeId, String categoryId, int year) {
+		JsonResult result = null;
+		try {
+			if (RepositoryDatastore.getDatastore() != null) {
+				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
+				Document auxResult = q.field("office.id").equal(officeId).field("category.id").equal(categoryId)
+						.field("year").equal(year).get();
+				if (auxResult != null) {
+					result = new JsonResult(true, "Success", auxResult.getId().toString());
+				} else
+					result = new JsonResult(false, "No result was found");
+			} else
+				result = new JsonResult(false, "Error while connecting to database");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new JsonResult(false, "Error while performing search");
+		}
+		return result;
+	}
+
 	@Override
 	public JsonResult getDocumentFileById(UUID id, int fileId) {
 		try {
@@ -83,7 +103,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						.get();
 				if (auxResult != null)
 					for (DocumentFile aux : auxResult.getFiles())
-						if (aux.getDoc_id() == fileId){
+						if (aux.getDoc_id() == fileId) {
 							DocumentFile df = fileArchive.retrieveFile(id, fileId);
 							aux.setB64(df.getB64());
 							return new JsonResult(true, "Success", aux);
@@ -104,9 +124,11 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 				Query<Document> q = RepositoryDatastore.getDatastore().createQuery(Document.class);
 				Document auxResult = q.field("id").equal(id).get();
 				if (auxResult != null) {
-					if(fileArchive.saveFile(id, number, req)){
-						UpdateOperations<Document> uq = RepositoryDatastore.getDatastore().createUpdateOperations(Document.class);
-						DocumentFile toAdd = new DocumentFile(id, number, req.getName(), id.toString() + "_" + number + ".pdf");
+					if (fileArchive.saveFile(id, number, req)) {
+						UpdateOperations<Document> uq = RepositoryDatastore.getDatastore()
+								.createUpdateOperations(Document.class);
+						DocumentFile toAdd = new DocumentFile(id, number, req.getName(),
+								id.toString() + "_" + number + ".pdf");
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
 						edService.deletePendingOfInsertDocument(id, number);
 						toReturn = new JsonResult(true, "Success", toAdd);

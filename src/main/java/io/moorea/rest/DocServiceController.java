@@ -58,29 +58,16 @@ public class DocServiceController {
 		return new JsonResult(true, "is Alive!");
 	}
 
-	@RequestMapping(value = "/htmlToPdf", method = RequestMethod.POST)
-	public JsonResult htmlToPdf(@RequestBody String postPayload) throws Exception {
-		InputStream is = new ByteArrayInputStream(postPayload.getBytes());
-		return pdfService.htmlToPdf(is);
-	}
+	/*
+	 * @RequestMapping(value = "/htmlToPdf", method = RequestMethod.POST)
+	 * public JsonResult htmlToPdf(@RequestBody String postPayload) throws Exception {
+	 *	InputStream is = new ByteArrayInputStream(postPayload.getBytes());
+	 *	return pdfService.htmlToPdf(is);
+	 *}
+	*/
 
 	@RequestMapping(value = "/api/files/next_number/{id}", method = RequestMethod.POST)
 	public JsonResult next_number(@PathVariable UUID id, @RequestBody String postPayload) throws Exception {
-		// comentado por ahora
-		/*
-		 * try { JsonParser parser = new JsonParser(); JsonObject obj =
-		 * parser.parse(postPayload).getAsJsonObject(); // Validate pdf base64
-		 * file JsonResult jsonResult =
-		 * pdfService.validatePdfFormat(obj.get("b64").getAsString()); if
-		 * (!jsonResult.getSuccess()) { return jsonResult; } // Get Document w
-		 * temp number jsonResult =
-		 * bookService.getNextNumber(jsonResult.getObject(),
-		 * obj.get("number").getAsString());
-		 * 
-		 * System.out.println(jsonResult.getSuccess()); return jsonResult; }
-		 * catch (Exception e) { e.printStackTrace(); } return new
-		 * JsonResult(false, "Existe un error en los parametros");
-		 */
 		JsonResult result = null;
 		try {
 			IJsonParser parser = new NextNumberRequestParserImpl();
@@ -100,12 +87,19 @@ public class DocServiceController {
 						break;
 					case NO_ERROR:
 						JsonResult auxRes = null;
-						auxRes = bookService.getNextNumber(req.getB64(), nextDocument.getNumber(),
-								nextDocument.getKey().toString());
-						if (auxRes.getSuccess()) {
-							nextDocument.setB64(auxRes.getObject().toString());
-							result = new JsonResult(true, "Success", nextDocument);
-						}
+						Document pDoc = null;
+						Object ao = documentService.getDocumentById(nextDocument.getParentDocument()).getObject();
+						if (ao != null) {
+							pDoc = (Document)ao;
+							auxRes = bookService.getNextNumber(req.getB64(), nextDocument,pDoc);
+							if (auxRes.getSuccess()) {
+								nextDocument.setB64(auxRes.getObject().toString());
+								result = new JsonResult(true, "Success", nextDocument);
+							}else{
+								result = new JsonResult(false, "Watermark couldn't be stamped");
+							}
+						}else
+							result = new JsonResult(false, "Error retrieving parent document");
 						break;
 					default:
 						break;
@@ -164,6 +158,11 @@ public class DocServiceController {
 		return documentService.getDocuments(type, page, limit, order_filed, order_direction);
 	}
 
+	@RequestMapping(value = "/api/files/manager/{officeId}/{categoryId}/{year}", method = RequestMethod.GET)
+	public JsonResult managerSearchSingle(@PathVariable String officeId,@PathVariable String categoryId,@PathVariable int year) throws Exception {
+		return documentService.searchDocument(officeId, categoryId, year);
+	}
+	
 	@RequestMapping(value = "/api/files/manager/{id}", method = RequestMethod.GET)
 	public JsonResult managerGetById(@PathVariable UUID id) throws Exception {
 		return documentService.getDocumentById(id);
@@ -224,7 +223,7 @@ public class DocServiceController {
 		try {
 			req = (ValidatePdfRequest) parser.parseJson(postPayload);
 			if (req != null)
-				return new JsonResult(true, "Success", pdfService.validatePdfFormat(req.getB64()));
+				return pdfService.validatePdfFormat(req.getB64());
 			else
 				return new JsonResult(false, "There's an error in parameters");
 		} catch (Exception e) {

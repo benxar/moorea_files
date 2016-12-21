@@ -17,6 +17,8 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.codec.Base64;
 
+import io.moorea.entity.Document;
+import io.moorea.entity.ExpiringDocument;
 import io.moorea.model.JsonResult;
 import io.moorea.service.BookService;
 import io.moorea.util.FormatUtil;
@@ -24,12 +26,13 @@ import io.moorea.util.FormatUtil;
 @Service
 public class BookServiceImpl implements BookService {
 	
-	public JsonResult getNextNumber(String b64, int number, String key) {	
+	public JsonResult getNextNumber(String b64, ExpiringDocument ed, Document pd) {	
 		BufferedImage image = null;
 		Image pdfImage = null;
 		try {
 			//Create Image Number
-			image = FormatUtil.convertTextToGraphic(String.valueOf(number), new Font("Arial", Font.BOLD, 26));
+			String cod = pd.getPrefix() + " 000" + ed.getNumber() + "/" + pd.getYear();
+			image = FormatUtil.convertTextToGraphic(cod, new Font("Arial", Font.BOLD, 26));
 			pdfImage = Image.getInstance( image, Color.white);
 		} catch (BadElementException e1) {
 			e1.printStackTrace();
@@ -43,7 +46,7 @@ public class BookServiceImpl implements BookService {
 			//PdfReader pdfReader =  (PdfReader) object;
 			PdfReader pdfReader = new PdfReader(Base64.decode(b64));
 			Map<String,String> infKey = new HashMap<String,String>();
-			infKey.put("internalkey", key);
+			infKey.put("internalkey", ed.getKey().toString());
 			ByteArrayOutputStream baos = FormatUtil.addImageToPDF(pdfReader,pdfImage,infKey); 
 			//tmp
 			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");

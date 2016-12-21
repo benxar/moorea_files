@@ -13,6 +13,8 @@ public interface DocumentRepositoryService {
 	public JsonResult getDocuments(String type, int page, int limit, String order_filed, String order_direction);
 
 	public JsonResult getDocumentById(UUID id);
+	
+	public JsonResult searchDocument(String officeId, String categoryId, int year);
 
 	public JsonResult getDocumentFileById(UUID id, int fileId);
 
