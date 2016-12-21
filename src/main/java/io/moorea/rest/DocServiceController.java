@@ -122,23 +122,28 @@ public class DocServiceController {
 		try {
 			IJsonParser parser = new NewFileRequestParserImpl();
 			NewFileRequest req = (NewFileRequest) parser.parseJson(postPayload);
-			Document toPersist = new Document();
-			toPersist.generateRandomId();
-			toPersist.setCategory(new Category(req.getCategoryId(), req.getCategoryText()));
-			toPersist.setOffice(new Office(req.getOfficeId(), req.getOfficeText()));
-			toPersist.setType(req.getType());
-			toPersist.setYear(req.getYear());
-			toPersist.setPrefix(req.getPrefix());
-			try {
-				generatedKey = documentService.save(toPersist);
-				if (generatedKey == null) {
+			if (!documentService.searchDocument(req.getOfficeId(), req.getCategoryId(), req.getYear()).getSuccess()) {
+				Document toPersist = new Document();
+				toPersist.generateRandomId();
+				toPersist.setCategory(new Category(req.getCategoryId(), req.getCategoryText()));
+				toPersist.setOffice(new Office(req.getOfficeId(), req.getOfficeText()));
+				toPersist.setType(req.getType());
+				toPersist.setYear(req.getYear());
+				toPersist.setPrefix(req.getPrefix());
+				try {
+					generatedKey = documentService.save(toPersist);
+					if (generatedKey == null) {
+						hayError = true;
+						error = "There was an error while saving the file";
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					error = "Error while saving file";
 					hayError = true;
-					error = "There was an error while saving the file";
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				error = "Error while saving file";
-				hayError = true;
+			}else{
+				error = "Can't have duplicate files with same office, category and year";
+				hayError=true;
 			}
 			if (!hayError) {
 				JsonResult result = new JsonResult(true, "Success", generatedKey);

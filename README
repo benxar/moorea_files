@@ -2,9 +2,9 @@
 //TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
 //DONE => agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
 //DONE => agregar endpoint para buscar expediente segun categoria, oficina y año
-//TODO: validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
+//DONE => validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
 //TODO: agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
-//TODO: validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
+//DONE => validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
 //DONE => agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
 //DONE => now the key is saved directly in the pdf. We must check if this key is correct before saving it
 //TODO: return http errors when the format of the messages is incorrect (now only returning success=false)
