@@ -21,12 +21,14 @@ import io.moorea.entity.Signer;
 import io.moorea.model.JsonResult;
 import io.moorea.model.JsonResultList;
 import io.moorea.parser.IJsonParser;
+import io.moorea.parser.impl.AttachToPdfRequestParserImpl;
 import io.moorea.parser.impl.ConvertToPdfRequestParserImpl;
 import io.moorea.parser.impl.FilePostRequestParserImpl;
 import io.moorea.parser.impl.GetSignersRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
 import io.moorea.parser.impl.NextNumberRequestParserImpl;
 import io.moorea.parser.impl.ValidatePdfRequestParserImpl;
+import io.moorea.parser.request.AttachToPdfRequest;
 import io.moorea.parser.request.ConvertToPdfRequest;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.parser.request.GetSignersRequest;
@@ -141,9 +143,9 @@ public class DocServiceController {
 					error = "Error while saving file";
 					hayError = true;
 				}
-			}else{
+			} else {
 				error = "Can't have duplicate files with same office, category and year";
-				hayError=true;
+				hayError = true;
 			}
 			if (!hayError) {
 				JsonResult result = new JsonResult(true, "Success", generatedKey);
@@ -209,7 +211,16 @@ public class DocServiceController {
 
 	@RequestMapping(value = "/api/files/helpers/atach_doc_to_pdf", method = RequestMethod.POST)
 	public JsonResult attachToPdf(@RequestBody String postPayload) throws Exception {
-		return null;
+		JsonResult result = null;
+		try {
+			IJsonParser parser = new AttachToPdfRequestParserImpl();
+			AttachToPdfRequest req = (AttachToPdfRequest) parser.parseJson(postPayload);
+			result = pdfService.addDocument(req);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new JsonResult(false, "There's an error in parameters");
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/api/files/helpers/convert_to_pdf", method = RequestMethod.POST)

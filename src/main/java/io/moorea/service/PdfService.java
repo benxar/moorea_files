@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+import io.moorea.entity.Attachment;
 import io.moorea.entity.Signer;
 import io.moorea.model.JsonResult;
+import io.moorea.parser.request.AttachToPdfRequest;
 
 public interface PdfService {
 
@@ -13,7 +15,7 @@ public interface PdfService {
 
 	public JsonResult validatePdfFormat(String string);
 
-	public JsonResult addDocument(InputStream html);
+	public JsonResult addDocument(AttachToPdfRequest req);
 
 	public List<Signer> getSigners(String b64Pdf);
 

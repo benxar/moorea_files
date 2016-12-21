@@ -1,9 +1,12 @@
 package io.moorea.service.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,15 +17,19 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
+import io.moorea.entity.Attachment;
 import io.moorea.entity.CertificateSubject;
 import io.moorea.entity.Signer;
 import io.moorea.model.JsonResult;
+import io.moorea.parser.request.AttachToPdfRequest;
 import io.moorea.service.PdfService;
 
 @Service
@@ -37,13 +44,11 @@ public class PdfServiceImpl implements PdfService {
 			document.open();
 			XMLWorkerHelper.getInstance().parseXHtml(writer, document, html);
 			document.close();
-
 			// tmp
 			// FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
 			// fos.write(baos.toByteArray());
 			// fos.close();
-
-			return new JsonResult(true, "Ok", Base64.encodeBytes(baos.toByteArray()));
+			return new JsonResult(true, "Success", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
 			e.printStackTrace();
 			return new JsonResult(false, e.getMessage());
@@ -70,21 +75,21 @@ public class PdfServiceImpl implements PdfService {
 	}
 
 	@Override
-	public JsonResult addDocument(InputStream html) {
+	public JsonResult addDocument(AttachToPdfRequest req) {
 		try {
+			PdfReader reader = new PdfReader(Base64.decode(req.getB64()));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Document document = new Document();
-			PdfWriter writer = PdfWriter.getInstance(document, baos);
-			document.open();
-			XMLWorkerHelper.getInstance().parseXHtml(writer, document, html);
-			document.close();
-
+			PdfStamper stamper = new PdfStamper(reader, baos);
+			for (Attachment attachment : req.getlAttach()) {
+				PdfFileSpecification fs = PdfFileSpecification.fileEmbedded(stamper.getWriter(), null, attachment.getName() + "." + attachment.getExtension(), Base64.decode(attachment.getB64()));
+				stamper.addFileAttachment(attachment.getName() + "." + attachment.getExtension(), fs);
+			}
+			stamper.close();
 			// tmp
-			// FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
-			// fos.write(baos.toByteArray());
-			// fos.close();
-
-			return new JsonResult(true, "Ok", Base64.encodeBytes(baos.toByteArray()));
+			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
+			fos.write(baos.toByteArray());
+			fos.close();
+			return new JsonResult(true, "Success", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
 			e.printStackTrace();
 			return new JsonResult(false, e.getMessage());
