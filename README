@@ -1,12 +1,18 @@
 //TODO: agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
 //TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
 //DONE => agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
-//TODO: agregar endpoint para buscar expediente segun categoria, oficina y año
+//DONE => agregar endpoint para buscar expediente segun categoria, oficina y año
+//TODO: validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
+//TODO: agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+//TODO: validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
+//DONE => agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
+//DONE => now the key is saved directly in the pdf. We must check if this key is correct before saving it
+//TODO: return http errors when the format of the messages is incorrect (now only returning success=false)
 [
 	{
 		"method": "POST",
 		"path": "/api/files/manager",
-		"request": {//TODO: validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
+		"request": {
 			"type": "book",
 			"header": {
 				"office": {"id": "H00000001", "text": "Dirección General"},
@@ -134,9 +140,6 @@
 	{
 		//nota: cuando piden numero siguiente, el expediente se bloquea y no es posible insertar nuevos documentos y 
 		//	esta funcion devolvera error mientras este bloqueado
-		//TODO: agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
-		//TODO: validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
-		//TODO: agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
 		"method": "POST",
 		"path": "/api/files/next_number/<id>",
 		"request": {
@@ -155,7 +158,6 @@
 		"logic": "Lock the number booking in redis and return the number inside the b64"
 	},
 	{
-		//TODO: now the key is saved directly in the pdf. We must check if this key is correct before saving it
 		"method": "PUT",//nota: antes era POST, se cambio a PUT porque colisionaba con otro endpoint por modificaciones
 		"path": "/api/files/manager",//nota: antes la ruta seguia con "/<id>/<number>" pero se saco, agregando el hash generado en el archivo pdf a subir. Por eso se cambio el metodo a PUT 
 		"request": {
