@@ -135,6 +135,7 @@ public class DocServiceController {
 			toPersist.setOffice(new Office(req.getOfficeId(), req.getOfficeText()));
 			toPersist.setType(req.getType());
 			toPersist.setYear(req.getYear());
+			toPersist.setPrefix(req.getPrefix());
 			try {
 				generatedKey = documentService.save(toPersist);
 				if (generatedKey == null) {
@@ -174,7 +175,7 @@ public class DocServiceController {
 		return documentService.getDocumentFileById(id, number);
 	}
 
-	@RequestMapping(value = "/api/files/manager", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/files/manager", method = RequestMethod.PUT)
 	public JsonResult managerPostDocumentFile(@RequestBody String postPayload) throws Exception {
 		JsonResult result = null;
 		ExpiringDocument tempDoc = null;

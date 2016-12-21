@@ -19,9 +19,11 @@ public class Configuration {
 
 	private String dbName;
 	private String dbConnUrl;
+	private int dbConnPort;
 	private String dbUser;
 	private String dbPassword;
 	private int expireAfterSeconds;
+	private String fsRoute;
 
 	public String getDbName() {
 		return dbName;
@@ -37,6 +39,14 @@ public class Configuration {
 
 	public void setDbConnUrl(String dbConnUrl) {
 		this.dbConnUrl = dbConnUrl;
+	}
+
+	public int getDbConnPort() {
+		return dbConnPort;
+	}
+
+	public void setDbConnPort(int dbConnPort) {
+		this.dbConnPort = dbConnPort;
 	}
 
 	public String getDbUser() {
@@ -61,5 +71,13 @@ public class Configuration {
 
 	public void setExpireAfterSeconds(int expireAfterSeconds) {
 		this.expireAfterSeconds = expireAfterSeconds;
+	}
+	
+	public String getFsRoute() {
+		return fsRoute;
+	}
+
+	public void setFsRoute(String fsRoute) {
+		this.fsRoute = fsRoute;
 	}
 }

@@ -143,8 +143,8 @@
 	},
 	{
 		//TODO: now the key is saved directly in the pdf. We must check if this key is correct before saving it
-		"method": "POST",
-		"path": "/api/files/manager/<id>/<number>",
+		"method": "PUT",//nota: antes era POST, se cambio a PUT porque colisionaba con otro endpoint por modificaciones
+		"path": "/api/files/manager",//nota: antes la ruta seguia con "/<id>/<number>" pero se saco, agregando el hash generado en el archivo pdf a subir. Por eso se cambio el metodo a PUT 
 		"request": {
 			"b64": "aefsefesf",
 			"name": ""

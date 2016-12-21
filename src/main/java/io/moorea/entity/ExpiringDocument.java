@@ -9,6 +9,7 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Transient;
 
+import io.moorea.configuration.Configuration;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 
 @Entity("ExpiringDocument")
@@ -28,7 +29,7 @@ public class ExpiringDocument {
 	private String b64;
 
 	public ExpiringDocument() {
-		expiringDate = new Date(System.currentTimeMillis() + 50000);
+		expiringDate = new Date(System.currentTimeMillis() + (Configuration.getInstance().getExpireAfterSeconds()*1000));
 		setKey(UUID.randomUUID());
 		setErrorCode(ExpiringDocumentErrorCode.NO_ERROR);
 	}

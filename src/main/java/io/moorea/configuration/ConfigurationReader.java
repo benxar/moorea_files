@@ -6,13 +6,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigurationReader {
-	public boolean getConfiguration() throws IOException {
+	public boolean getConfiguration() throws Exception {
 		boolean result = false;
 		InputStream inputStream = null;
 		try {
 			Configuration conf = Configuration.getInstance();
 			Properties prop = new Properties();
-			String propFileName = "config.properties";
+			String propFileName = "moorea_files.properties";
  
 			inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
  
@@ -23,14 +23,18 @@ public class ConfigurationReader {
 			}
 			String dbName = prop.getProperty("dbName");
 			String dbConnUrl = prop.getProperty("dbConnUrl");
+			String dbConnPort = prop.getProperty("dbConnPort");
 			String dbUser = prop.getProperty("dbUser");
 			String dbPassword = prop.getProperty("dbPassword");
 			String expireAfterSeconds = prop.getProperty("expireAfterSeconds");
+			String fsRoute = prop.getProperty("fsRoute");
 			conf.setDbName(dbName);
 			conf.setDbConnUrl(dbConnUrl);
+			conf.setDbConnPort(Integer.valueOf(dbConnPort));
 			conf.setDbPassword(dbPassword);
 			conf.setDbUser(dbUser);
 			conf.setExpireAfterSeconds(Integer.valueOf(expireAfterSeconds));
+			conf.setFsRoute(fsRoute);
 			result = true;
 		} catch (Exception e) {
 			e.printStackTrace();

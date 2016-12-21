@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import io.moorea.configuration.Configuration;
 import io.moorea.entity.DocumentFile;
 import io.moorea.parser.request.FilePostRequest;
 import io.moorea.persistence.DocumentFileDAO;
@@ -23,7 +24,7 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 		try {
 			byte[] data = Base64.getDecoder().decode(fpr.getB64());
 			fileName = fileId.toString() + "_" + number + ".pdf";
-			try (OutputStream stream = new FileOutputStream(path + "/" + fileName)) {
+			try (OutputStream stream = new FileOutputStream(Configuration.getInstance().getFsRoute() + "/" + fileName)) {
 				stream.write(data);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -42,7 +43,7 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 		String fileName = "";
 		try {
 			fileName = fileId.toString() + "_" + number + ".pdf";
-			File f = new File(path + "/" + fileName);
+			File f = new File(Configuration.getInstance().getFsRoute() + "/" + fileName);
 			if (f.exists()) {
 				FileInputStream fis = new FileInputStream(f);
 				BufferedInputStream bis = new BufferedInputStream(fis);
@@ -61,10 +62,10 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 
 	@Override
 	public boolean deleteFile(UUID fileId, int number) {
-		String fileName = "";
+		String fileRoute = "";
 		try {
-			fileName = fileId.toString() + "_" + number + ".pdf";
-			File f = new File(fileName);
+			fileRoute = Configuration.getInstance().getFsRoute() + "/" + fileId.toString() + "_" + number + ".pdf";
+			File f = new File(fileRoute);
 			if (f.exists()) {
 				return f.delete();
 			} else

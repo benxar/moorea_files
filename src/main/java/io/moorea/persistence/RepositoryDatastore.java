@@ -5,6 +5,8 @@ import org.mongodb.morphia.Morphia;
 
 import com.mongodb.MongoClient;
 
+import io.moorea.configuration.Configuration;
+
 public class RepositoryDatastore {
 	private RepositoryDatastore() {
 	}
@@ -26,10 +28,10 @@ public class RepositoryDatastore {
 
 	private static boolean setDatastore() {
 		try {
-			MongoClient client = new MongoClient();
+			MongoClient client = new MongoClient(Configuration.getInstance().getDbConnUrl(),Configuration.getInstance().getDbConnPort());
 			Morphia morphia = new Morphia();
 			morphia.mapPackage("io.moorea.entity");
-			datastore = morphia.createDatastore(client, "mydb");
+			datastore = morphia.createDatastore(client, Configuration.getInstance().getDbName());
 			datastore.ensureIndexes();
 			return true;
 		} catch (Exception e) {
