@@ -6,7 +6,7 @@
 	<groupId>io.moorea</groupId>
 	<artifactId>moorea-files</artifactId>
 
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
