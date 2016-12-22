@@ -131,10 +131,14 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						DocumentFile toAdd = new DocumentFile(id, number, req.getName(),
 								id.toString() + "_" + number + ".pdf");
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
+						UpdateOperations<Document> uq1 = RepositoryDatastore.getDatastore()
+								.createUpdateOperations(Document.class);
 						RepositoryDatastore.getDatastore().update(auxResult,
-								uq.set("updates", auxResult.getUpdates() + 1));
+								uq1.set("updates", auxResult.getUpdates() + 1));
+						UpdateOperations<Document> uq2 = RepositoryDatastore.getDatastore()
+								.createUpdateOperations(Document.class);
 						RepositoryDatastore.getDatastore().update(auxResult,
-								uq.set("lastUpdate", new Date(System.currentTimeMillis())));
+								uq2.set("lastUpdate", new Date(System.currentTimeMillis())));
 						edService.deletePendingOfInsertDocument(id, number);
 						toReturn = new JsonResult(true, "Success", toAdd);
 					} else
