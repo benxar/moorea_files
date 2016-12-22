@@ -87,6 +87,11 @@ public class PdfServiceImpl implements PdfService {
 				nDoc.close();
 				PdfReader nReader = new PdfReader(baos.toByteArray());
 				stamper = new PdfStamper(nReader, baos);
+				stamper.setFormFlattening(true);
+				String attchName = "original_signed_document";
+				PdfFileSpecification fs = PdfFileSpecification.fileEmbedded(stamper.getWriter(), null,
+						attchName + ".pdf", Base64.decode(req.getB64()));
+				stamper.addFileAttachment(attchName + ".pdf", fs);
 			} else {
 				stamper = new PdfStamper(reader, baos);
 			}

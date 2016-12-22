@@ -4,7 +4,7 @@
 //DONE => agregar endpoint para buscar expediente segun categoria, oficina y año
 //DONE => validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
 //DONE => al ponerle la estampa agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
-//TODO: al adjuntar agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+//DONE => al adjuntar agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
 //DONE => validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
 //DONE => agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
 //DONE => now the key is saved directly in the pdf. We must check if this key is correct before saving it
