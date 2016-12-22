@@ -13,6 +13,8 @@
 - [ ] return http errors when the format of the messages is incorrect (now only returning success=false)
 
 ## API
+
+```javascript
 [
 	{
 		"method": "POST",
@@ -278,3 +280,4 @@
 	}
 
 ]
+```
