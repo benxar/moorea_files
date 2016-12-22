@@ -57,7 +57,7 @@ public class DocServiceController {
 
 	@RequestMapping(value = "/alive")
 	public JsonResult getName() throws Exception {
-		return new JsonResult(true, "is Alive!");
+		return new JsonResult(true, "esta vivito!");
 	}
 
 	/*

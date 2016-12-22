@@ -1,5 +1,6 @@
 package io.moorea.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,6 +131,10 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						DocumentFile toAdd = new DocumentFile(id, number, req.getName(),
 								id.toString() + "_" + number + ".pdf");
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
+						RepositoryDatastore.getDatastore().update(auxResult,
+								uq.set("updates", auxResult.getUpdates() + 1));
+						RepositoryDatastore.getDatastore().update(auxResult,
+								uq.set("lastUpdate", new Date(System.currentTimeMillis())));
 						edService.deletePendingOfInsertDocument(id, number);
 						toReturn = new JsonResult(true, "Success", toAdd);
 					} else
