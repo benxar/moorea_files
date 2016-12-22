@@ -17,7 +17,6 @@ import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -91,15 +90,15 @@ public class AddDocumentToFile {
 	        gs1.setFillOpacity(0.5f);
 	        // properties
 	        PdfContentByte over;
-	        Rectangle pagesize;
-	        float x, y;
+	        //Rectangle pagesize;
+	        //float x, y;
 	        
 	        // Agregar nueva propiedad de folio 
 	        properties.put("folio", String.valueOf(folio));
 	        
-			pagesize = reader.getPageSizeWithRotation(1);
-            x = (pagesize.getLeft() + pagesize.getRight()) / 2;
-            y = (pagesize.getTop() + pagesize.getBottom()) / 2;
+			//pagesize = reader.getPageSizeWithRotation(1);
+            //x = (pagesize.getLeft() + pagesize.getRight()) / 2;
+            //y = (pagesize.getTop() + pagesize.getBottom()) / 2;
             over = stamper.getOverContent(1);
             over.saveState();
             over.setGState(gs1);                         

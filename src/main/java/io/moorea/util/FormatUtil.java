@@ -49,7 +49,7 @@ public class FormatUtil {
 
 	public static ByteArrayOutputStream addImageToPDF(PdfReader reader, Image img, Map<String,String> info)
 			throws IOException, DocumentException {
-		int n = reader.getNumberOfPages();
+		//int n = reader.getNumberOfPages();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PdfStamper stamper = new PdfStamper(reader, baos);
@@ -60,8 +60,8 @@ public class FormatUtil {
 		}
 		float x = 10;
 		float y = 650;
-		float w = img.getWidth();
-		float h = img.getHeight();
+		//float w = img.getWidth();
+		//float h = img.getHeight();
 		img.setAbsolutePosition(reader.getPageSize(1).getWidth() - 200, reader.getPageSize(1).getHeight() - 30);
 		stamper.getOverContent(1).addImage(img);
 		Rectangle linkLocation = new Rectangle(x, y);
