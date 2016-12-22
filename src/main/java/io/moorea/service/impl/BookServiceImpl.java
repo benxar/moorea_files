@@ -19,8 +19,6 @@ import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.codec.Base64;
-import com.itextpdf.text.pdf.pdfcleanup.PdfCleanUpProcessor;
-
 import io.moorea.entity.Document;
 import io.moorea.entity.ExpiringDocument;
 import io.moorea.model.JsonResult;
