@@ -11,24 +11,34 @@ import io.moorea.configuration.ConfigurationReader;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
-	
-	public Application(){
+
+	public Application() {
 		// SpringApplication.run(Application.class);
 	}
 
 	@Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-       return application.sources(applicationClass);
-    }
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		ConfigurationReader cr = new ConfigurationReader();
+		try {
+			if (cr.getConfiguration())
+				return application.sources(applicationClass);
+			else
+				return application.sources(applicationClass);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return application.sources(applicationClass);
+		}
 
-    public static void main(String[] args) throws Exception {
-       ConfigurationReader cr = new ConfigurationReader();
-       if(cr.getConfiguration())
-    	   SpringApplication.run(applicationClass, args);
-       else
-    	   throw new IOException("Config file couldn't be read");
-    }
-    
-    private static Class<Application> applicationClass = Application.class;
+	}
+
+	public static void main(String[] args) throws Exception {
+		ConfigurationReader cr = new ConfigurationReader();
+		if (cr.getConfiguration())
+			SpringApplication.run(applicationClass, args);
+		else
+			throw new IOException("Config file couldn't be read");
+	}
+
+	private static Class<Application> applicationClass = Application.class;
 
 }
