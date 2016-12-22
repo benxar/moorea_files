@@ -3,10 +3,8 @@ package io.moorea.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfFileSpecification;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
@@ -64,10 +62,10 @@ public class PdfServiceImpl implements PdfService {
 		boolean encripted = false;
 		try {
 			PdfReader pdfReader = new PdfReader(Base64.decode(b64Pdf));
-			if (pdfReader.isEncrypted())
+			AcroFields af = pdfReader.getAcroFields();
+			ArrayList<String> names = af.getSignatureNames();
+			if (names.size() > 0)
 				encripted = true;
-			// String textFromPdfFilePageOne = PdfTextExtractor.getTextFromPage(
-			// pdfReader, 1 );
 			return new JsonResult(true, "Success", encripted);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,23 +76,30 @@ public class PdfServiceImpl implements PdfService {
 	@Override
 	public JsonResult addDocument(AttachToPdfRequest req, boolean encrypted) {
 		try {
-			/*if(encrypted){
-				PdfDocument nDoc = new PdfDocument();
-				
-				nDoc.addWriter(writer);
-			}*/
 			PdfReader reader = new PdfReader(Base64.decode(req.getB64()));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PdfStamper stamper = new PdfStamper(reader, baos);
+			PdfStamper stamper = null;
+			if (encrypted) {
+				Document nDoc = new Document();
+				PdfCopy copier = new PdfCopy(nDoc, baos);
+				nDoc.open();
+				copier.addDocument(reader);
+				nDoc.close();
+				PdfReader nReader = new PdfReader(baos.toByteArray());
+				stamper = new PdfStamper(nReader, baos);
+			} else {
+				stamper = new PdfStamper(reader, baos);
+			}
 			for (Attachment attachment : req.getlAttach()) {
-				PdfFileSpecification fs = PdfFileSpecification.fileEmbedded(stamper.getWriter(), null, attachment.getName() + "." + attachment.getExtension(), Base64.decode(attachment.getB64()));
+				PdfFileSpecification fs = PdfFileSpecification.fileEmbedded(stamper.getWriter(), null,
+						attachment.getName() + "." + attachment.getExtension(), Base64.decode(attachment.getB64()));
 				stamper.addFileAttachment(attachment.getName() + "." + attachment.getExtension(), fs);
 			}
 			stamper.close();
 			// tmp
-			//FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
-			//fos.write(baos.toByteArray());
-			//fos.close();
+			FileOutputStream fos = new FileOutputStream("/tmp/test.pdf");
+			fos.write(baos.toByteArray());
+			fos.close();
 			return new JsonResult(true, "Success", Base64.encodeBytes(baos.toByteArray()));
 		} catch (DocumentException e) {
 			e.printStackTrace();

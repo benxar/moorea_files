@@ -73,7 +73,8 @@ public class DocServiceController {
 		try {
 			IJsonParser parser = new NextNumberRequestParserImpl();
 			NextNumberRequest req = (NextNumberRequest) parser.parseJson(postPayload);
-			if (pdfService.validatePdfFormat(req.getB64()).getSuccess()) {
+			JsonResult isPdf = pdfService.validatePdfFormat(req.getB64());
+			if (isPdf.getSuccess()) {
 				ExpiringDocument nextDocument = documentService.nextNumber(id);
 				if (nextDocument != null) {
 					switch (nextDocument.getErrorCode()) {
@@ -92,7 +93,8 @@ public class DocServiceController {
 						Object ao = documentService.getDocumentById(nextDocument.getParentDocument()).getObject();
 						if (ao != null) {
 							pDoc = (Document) ao;
-							auxRes = bookService.getNextNumber(req.getB64(), nextDocument, pDoc);
+							auxRes = bookService.getNextNumber(req.getB64(), nextDocument, pDoc,
+									(boolean) isPdf.getObject());
 							if (auxRes.getSuccess()) {
 								nextDocument.setB64(auxRes.getObject().toString());
 								result = new JsonResult(true, "Success", nextDocument);
@@ -217,7 +219,7 @@ public class DocServiceController {
 			AttachToPdfRequest req = (AttachToPdfRequest) parser.parseJson(postPayload);
 			JsonResult isPdf = pdfService.validatePdfFormat(req.getB64());
 			if (isPdf.getSuccess())
-				result = pdfService.addDocument(req,(boolean)isPdf.getObject());
+				result = pdfService.addDocument(req, (boolean) isPdf.getObject());
 			else
 				result = new JsonResult(false, "The file must be a pdf");
 		} catch (Exception e) {

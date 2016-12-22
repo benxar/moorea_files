@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
-import io.moorea.entity.Attachment;
 import io.moorea.entity.Signer;
 import io.moorea.model.JsonResult;
 import io.moorea.parser.request.AttachToPdfRequest;
