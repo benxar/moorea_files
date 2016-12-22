@@ -9,7 +9,7 @@
 - [x] now the key is saved directly in the pdf. We must check if this key is correct before saving it
 - [ ] agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
 - [ ] agregar la posibilidad de subir archivos en formato multipart en vez de base64
-- [ ] hacer que se modifique la ultima fecha de actualizacion del documento y la cantidad de actualizaciones
+- [x] hacer que se modifique la ultima fecha de actualizacion del documento y la cantidad de actualizaciones
 - [ ] return http errors when the format of the messages is incorrect (now only returning success=false)
 
 ## API
