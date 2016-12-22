@@ -1,15 +1,20 @@
-//TODO: agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
-//TODO: agregar la posibilidad de subir archivos en formato multipart en vez de base64
-//DONE => agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
-//DONE => agregar endpoint para buscar expediente segun categoria, oficina y año
-//DONE => validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
-//DONE => al ponerle la estampa agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
-//DONE => al adjuntar agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
-//DONE => validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
-//DONE => agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
-//DONE => now the key is saved directly in the pdf. We must check if this key is correct before saving it
-//TODO: hacer que se modifique la ultima fecha de actualizacion del documento y la cantidad de actualizaciones
-//TODO: return http errors when the format of the messages is incorrect (now only returning success=false)
+## TODO
+- [x] agregar el campo sigla a la entidad document, el cual se va a estampar en cada documento anexado al hacer next_number 
+- [x] agregar endpoint para buscar expediente segun categoria, oficina y año
+- [x] validar que el expediente no exista con la misma oficina, categoria y año, devolver error, ya existe
+- [x] al ponerle la estampa agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+- [x] al adjuntar agregar que si el pdf esta firmado, que cree una copia nueva de la version anterior y lo adjunte al mismo
+- [x] validar que realmente sea un pdf, en caso contrario devolver que es formato invalido
+- [x] agregar a la estampa el param_text usando este formato: param_text + " 000" + number + "/" + year
+- [x] now the key is saved directly in the pdf. We must check if this key is correct before saving it
+- [ ] agregar la posibilidad de subir archivos no asociados a ningun expediente y luego asociarlos
+- [ ] agregar la posibilidad de subir archivos en formato multipart en vez de base64
+- [ ] hacer que se modifique la ultima fecha de actualizacion del documento y la cantidad de actualizaciones
+- [ ] return http errors when the format of the messages is incorrect (now only returning success=false)
+
+## API
+
+```javascript
 [
 	{
 		"method": "POST",
@@ -107,7 +112,7 @@
 	},
 	{
 		"method": "GET",
-		"path": "/api/files/manager/<id>/<number>",
+		"path": "/api/files/manager/<id>/documents/<number>",
 		"response": {
 			"success": true,
 			"result": {
@@ -275,3 +280,4 @@
 	}
 
 ]
+```
