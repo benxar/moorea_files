@@ -4,7 +4,7 @@ public class JsonResult {
 	
 	private Boolean success;
 	private String msg;
-	private Object object;
+	private Object result;
 	
 	public JsonResult(Boolean success, String msg){
 		this.success = success;
@@ -14,7 +14,7 @@ public class JsonResult {
 	public JsonResult(Boolean success, String msg, Object object){
 		this.success = success;
 		this.msg = msg;
-		this.object = object;
+		this.result = object;
 	}
 	
 	public Boolean getSuccess() {
@@ -30,12 +30,12 @@ public class JsonResult {
 		this.msg = msg;
 	}
 
-	public Object getObject() {
-		return object;
+	public Object getResult() {
+		return result;
 	}
 
-	public void setObject(Object object) {
-		this.object = object;
+	public void setResult(Object object) {
+		this.result = object;
 	}
 	
 	

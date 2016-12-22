@@ -90,13 +90,13 @@ public class DocServiceController {
 					case NO_ERROR:
 						JsonResult auxRes = null;
 						Document pDoc = null;
-						Object ao = documentService.getDocumentById(nextDocument.getParentDocument()).getObject();
+						Object ao = documentService.getDocumentById(nextDocument.getParentDocument()).getResult();
 						if (ao != null) {
 							pDoc = (Document) ao;
 							auxRes = bookService.getNextNumber(req.getB64(), nextDocument, pDoc,
-									(boolean) isPdf.getObject());
+									(boolean) isPdf.getResult());
 							if (auxRes.getSuccess()) {
-								nextDocument.setB64(auxRes.getObject().toString());
+								nextDocument.setB64(auxRes.getResult().toString());
 								result = new JsonResult(true, "Success", nextDocument);
 							} else {
 								result = new JsonResult(false, "Watermark couldn't be stamped");
@@ -219,7 +219,7 @@ public class DocServiceController {
 			AttachToPdfRequest req = (AttachToPdfRequest) parser.parseJson(postPayload);
 			JsonResult isPdf = pdfService.validatePdfFormat(req.getB64());
 			if (isPdf.getSuccess())
-				result = pdfService.addDocument(req, (boolean) isPdf.getObject());
+				result = pdfService.addDocument(req, (boolean) isPdf.getResult());
 			else
 				result = new JsonResult(false, "The file must be a pdf");
 		} catch (Exception e) {
