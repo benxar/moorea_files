@@ -50,7 +50,8 @@ public class DocumentFileDAOImpl implements DocumentFileDAO {
 				byte[] arr = new byte[(int) f.length()];
 				bis.read(arr);
 				String b64 = Base64.getEncoder().encodeToString(arr);
-				result = new DocumentFile(fileId, number, "", b64);
+				result = new DocumentFile(fileId, number, "", "");
+				result.setB64(b64);
 				bis.close();
 			}
 			return result;
