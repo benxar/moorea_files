@@ -140,6 +140,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						RepositoryDatastore.getDatastore().update(auxResult,
 								uq2.set("lastUpdate", new Date(System.currentTimeMillis())));
 						edService.deletePendingOfInsertDocument(id, number);
+						toAdd.setB64(req.getB64());
 						toReturn = new JsonResult(true, "Success", toAdd);
 					} else
 						toReturn = new JsonResult(false, "Error while saving file");
