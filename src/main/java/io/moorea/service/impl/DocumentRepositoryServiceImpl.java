@@ -17,6 +17,7 @@ import io.moorea.persistence.DocumentFileDAO;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.DocumentRepositoryService;
 import io.moorea.service.ExpiringDocumentRepositoryService;
+import io.moorea.service.PdfService;
 
 @Service
 public class DocumentRepositoryServiceImpl implements DocumentRepositoryService {
@@ -26,6 +27,9 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	@Autowired
 	private DocumentFileDAO fileArchive;
 
+	@Autowired
+	private PdfService pService;
+	
 	@Override
 	public UUID save(Document document) {
 		if (RepositoryDatastore.getDatastore() != null)
@@ -107,6 +111,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						if (aux.getDoc_id() == fileId) {
 							DocumentFile df = fileArchive.retrieveFile(id, fileId);
 							aux.setB64(df.getB64());
+							aux.setSigners(pService.getSigners(df.getB64()));
 							return new JsonResult(true, "Success", aux);
 						}
 				return new JsonResult(false, "No result was found");
