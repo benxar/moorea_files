@@ -177,7 +177,7 @@ public class DocServiceController {
 		return documentService.getDocumentById(id);
 	}
 
-	@RequestMapping(value = "/api/files/manager/{id}/{number}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/files/manager/{id}/documents/{number}", method = RequestMethod.GET)
 	public JsonResult managerGetDocumentFileByDocumentIdAndNumber(@PathVariable UUID id, @PathVariable int number)
 			throws Exception {
 		return documentService.getDocumentFileById(id, number);

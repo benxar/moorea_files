@@ -8,10 +8,13 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import io.moorea.configuration.Configuration;
 import io.moorea.entity.UnassignedFile;
 import io.moorea.persistence.UnassignedFileDAO;
 
+@Service
 public class UnassignedFileDAOImpl implements UnassignedFileDAO {
 
 	private String path = "";
