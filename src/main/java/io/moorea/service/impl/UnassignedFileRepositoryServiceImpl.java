@@ -46,7 +46,7 @@ public class UnassignedFileRepositoryServiceImpl implements UnassignedFileReposi
 					if (auxC != null) {
 						rd.setB64(auxC.getB64());
 						result = new JsonResult(true, "Success", rd);
-					}else
+					} else
 						result = new JsonResult(false, "Error while retrieving contents of file");
 				} else
 					result = new JsonResult(false, "No result was found");
@@ -61,8 +61,15 @@ public class UnassignedFileRepositoryServiceImpl implements UnassignedFileReposi
 
 	@Override
 	public JsonResult searchUnassignedFileByKeywords(List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
+		JsonResult result = null;
+		try {
+			//Query<UnassignedFile> query = RepositoryDatastore.getDatastore().createQuery(UnassignedFile.class);
+			//UnassignedFile rd = query.field("keyWords").equal(id).get();
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new JsonResult(false, "There was an error whyle searching unassigned files");
+		}
+		return result;
 	}
 
 	@Override

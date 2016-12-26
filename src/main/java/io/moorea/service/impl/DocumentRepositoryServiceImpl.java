@@ -51,7 +51,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 				if (result != null && result.size() > 0)
 					toReturn = new JsonResult(true, "Success", result);
 				else
-					toReturn = new JsonResult(false, "No results where found");
+					toReturn = new JsonResult(true, "No results where found");
 			} else
 				toReturn = new JsonResult(false, "Error while connecting to database");
 		} catch (Exception e) {
@@ -70,7 +70,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 				if (result != null)
 					toReturn = new JsonResult(true, "Success", result);
 				else
-					toReturn = new JsonResult(false, "No result was found");
+					toReturn = new JsonResult(true, "No result was found");
 			} else
 				toReturn = new JsonResult(false, "Error while connecting to database");
 		} catch (Exception e) {
@@ -89,7 +89,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 				if (auxResult != null) {
 					result = new JsonResult(true, "Success", auxResult.getId().toString());
 				} else
-					result = new JsonResult(false, "No result was found");
+					result = new JsonResult(true, "No result was found");
 			} else
 				result = new JsonResult(false, "Error while connecting to database");
 		} catch (Exception e) {
@@ -135,6 +135,10 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 								.createUpdateOperations(Document.class);
 						DocumentFile toAdd = new DocumentFile(id, number, req.getName(),
 								id.toString() + "_" + number + ".pdf");
+						List<Attachment> lAtt = pService.getAttachments(req.getB64());
+						if (lAtt != null) {
+							toAdd.setAttachments(lAtt);	
+						}
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
 						UpdateOperations<Document> uq1 = RepositoryDatastore.getDatastore()
 								.createUpdateOperations(Document.class);

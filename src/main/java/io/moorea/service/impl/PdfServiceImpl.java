@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfFileSpecification;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -159,6 +162,33 @@ public class PdfServiceImpl implements PdfService {
 			Map<String, String> auxInfo = reader.getInfo();
 			if (auxInfo != null) {
 				result = UUID.fromString(auxInfo.get("internalkey"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = null;
+		}
+		return result;
+	}
+
+	@Override
+	public List<Attachment> getAttachments(String b64Pdf) {
+		PdfReader reader = null;
+		List<Attachment> result = null;
+		try {
+			result = new ArrayList<>();
+			reader = new PdfReader(Base64.decode(b64Pdf));
+			PdfDictionary root = reader.getCatalog();
+			PdfDictionary names = root.getAsDict(PdfName.NAMES); // may be null
+			PdfArray embeddedFiles = names.getAsArray(PdfName.EMBEDDEDFILES); //may be null
+			int len = embeddedFiles.size();
+			for (int i = 0; i < len; i += 2) {
+			  PdfName name = embeddedFiles.getAsName(i); // should always be present
+			  Attachment auxAtt = new Attachment();
+			  String nombre = PdfName.decodeName(name.toString());
+			  String extension = nombre.lastIndexOf('.') > 0 ? nombre.substring(nombre.lastIndexOf('.')) : "";
+			  auxAtt.setName(PdfName.decodeName(name.toString()));
+			  auxAtt.setExtension(extension);
+			  result.add(auxAtt);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

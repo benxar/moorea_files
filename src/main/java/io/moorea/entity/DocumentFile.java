@@ -1,5 +1,6 @@
 package io.moorea.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ public class DocumentFile {
 	private int doc_id;
 	private String name;
 	private String path;
+	private List<Attachment> attachments = new ArrayList<>();
 	@Transient
 	private String b64;
 	@Transient
@@ -71,6 +73,22 @@ public class DocumentFile {
 	
 	public void removeSingner(Signer toRemove){
 		this.signers.remove(toRemove);
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+	
+	public void addAttachment(Attachment toAdd){
+		this.attachments.add(toAdd);
+	}
+	
+	public void removeSingner(Attachment toRemove){
+		this.attachments.remove(toRemove);
 	}
 
 	public DocumentFile(UUID parent, int doc_id, String name, String path) {

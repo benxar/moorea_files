@@ -1,19 +1,24 @@
 package io.moorea.entity;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Transient;
 
 @Embedded
 public class Attachment {
-	private String id;
+	@Id
+	private ObjectId id;
 	private String name;
 	private String extension;
+	@Transient
 	private String b64;
 
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 
@@ -41,9 +46,8 @@ public class Attachment {
 		this.b64 = b64;
 	}
 
-	public Attachment(String id, String name, String extension) {
+	public Attachment(String name, String extension) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.extension = extension;
 	}
