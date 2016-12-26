@@ -9,7 +9,6 @@ import java.util.Base64;
 import java.util.UUID;
 
 import io.moorea.configuration.Configuration;
-import io.moorea.entity.DocumentFile;
 import io.moorea.entity.UnassignedFile;
 import io.moorea.persistence.UnassignedFileDAO;
 
