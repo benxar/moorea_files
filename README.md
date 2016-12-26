@@ -11,6 +11,7 @@
 - [ ] agregar la posibilidad de subir archivos en formato multipart en vez de base64
 - [x] hacer que se modifique la ultima fecha de actualizacion del documento y la cantidad de actualizaciones
 - [ ] return http errors when the format of the messages is incorrect (now only returning success=false)
+- [ ] agregar fecha de firma de documento al consultar por un documento especifico (/api/files/manager/<id>/documents/<number>)
 
 ## API
 
