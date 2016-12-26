@@ -126,7 +126,8 @@ public class DocServiceController {
 		try {
 			IJsonParser parser = new NewFileRequestParserImpl();
 			NewFileRequest req = (NewFileRequest) parser.parseJson(postPayload);
-			if (!documentService.searchDocument(req.getOfficeId(), req.getCategoryId(), req.getYear()).getSuccess()) {
+			JsonResult aux = documentService.searchDocument(req.getOfficeId(), req.getCategoryId(), req.getYear());
+			if (aux.getSuccess() && aux.getResult() == null) {
 				Document toPersist = new Document();
 				toPersist.generateRandomId();
 				toPersist.setCategory(new Category(req.getCategoryId(), req.getCategoryText()));

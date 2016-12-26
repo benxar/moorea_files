@@ -114,7 +114,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 							aux.setSigners(pService.getSigners(df.getB64()));
 							return new JsonResult(true, "Success", aux);
 						}
-				return new JsonResult(false, "No result was found");
+				return new JsonResult(true, "No result was found");
 			} else
 				return new JsonResult(false, "Error while connecting to database");
 		} catch (Exception e) {
