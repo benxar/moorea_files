@@ -20,20 +20,20 @@ public class Application extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		ConfigurationReader cr = new ConfigurationReader();
 		try {
-			if (cr.getConfiguration())
-				return application.sources(applicationClass);
-			else
-				return application.sources(applicationClass);
+			if (!cr.getConfigurationFromParameters())
+				cr.getConfigurationFromFile();
+			return application.sources(applicationClass);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return application.sources(applicationClass);
 		}
-
 	}
 
 	public static void main(String[] args) throws Exception {
 		ConfigurationReader cr = new ConfigurationReader();
-		if (cr.getConfiguration())
+		if (cr.getConfigurationFromParameters())
+			SpringApplication.run(applicationClass, args);
+		else if (cr.getConfigurationFromFile())
 			SpringApplication.run(applicationClass, args);
 		else
 			throw new IOException("Config file couldn't be read");
