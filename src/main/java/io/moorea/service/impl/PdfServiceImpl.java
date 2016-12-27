@@ -38,6 +38,26 @@ import io.moorea.service.PdfService;
 public class PdfServiceImpl implements PdfService {
 
 	@Override
+	public JsonResult getProperty(String b64Pdf, String property) {
+		JsonResult result = null;
+		String value = "";
+		try {
+			PdfReader pdfReader = new PdfReader(Base64.decode(b64Pdf));
+			Map<String, String> auxInfo = pdfReader.getInfo();
+			if (auxInfo != null) {
+				value = auxInfo.get(property);
+				result = new JsonResult(true, "Success", value);
+			} else {
+				result = new JsonResult(true, "The property doesn't exist in the pdf");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = new JsonResult(false, "Error while fetching info from document");
+		}
+		return result;
+	}
+
+	@Override
 	public JsonResult htmlToPdf(InputStream html) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -179,16 +199,19 @@ public class PdfServiceImpl implements PdfService {
 			reader = new PdfReader(Base64.decode(b64Pdf));
 			PdfDictionary root = reader.getCatalog();
 			PdfDictionary names = root.getAsDict(PdfName.NAMES); // may be null
-			PdfArray embeddedFiles = names.getAsArray(PdfName.EMBEDDEDFILES); //may be null
+			PdfArray embeddedFiles = names.getAsArray(PdfName.EMBEDDEDFILES); // may
+																				// be
+																				// null
 			int len = embeddedFiles.size();
 			for (int i = 0; i < len; i += 2) {
-			  PdfName name = embeddedFiles.getAsName(i); // should always be present
-			  Attachment auxAtt = new Attachment();
-			  String nombre = PdfName.decodeName(name.toString());
-			  String extension = nombre.lastIndexOf('.') > 0 ? nombre.substring(nombre.lastIndexOf('.')) : "";
-			  auxAtt.setName(PdfName.decodeName(name.toString()));
-			  auxAtt.setExtension(extension);
-			  result.add(auxAtt);
+				PdfName name = embeddedFiles.getAsName(i); // should always be
+															// present
+				Attachment auxAtt = new Attachment();
+				String nombre = PdfName.decodeName(name.toString());
+				String extension = nombre.lastIndexOf('.') > 0 ? nombre.substring(nombre.lastIndexOf('.')) : "";
+				auxAtt.setName(PdfName.decodeName(name.toString()));
+				auxAtt.setExtension(extension);
+				result.add(auxAtt);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

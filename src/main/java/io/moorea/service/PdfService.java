@@ -11,6 +11,8 @@ import io.moorea.parser.request.AttachToPdfRequest;
 
 public interface PdfService {
 
+	public JsonResult getProperty(String b64Pdf,String property);
+	
 	public JsonResult htmlToPdf(InputStream html);
 
 	public JsonResult validatePdfFormat(String string);

@@ -24,6 +24,7 @@ import io.moorea.parser.IJsonParser;
 import io.moorea.parser.impl.AttachToPdfRequestParserImpl;
 import io.moorea.parser.impl.ConvertToPdfRequestParserImpl;
 import io.moorea.parser.impl.FilePostRequestParserImpl;
+import io.moorea.parser.impl.GetPdfPropertyRequestParserImpl;
 import io.moorea.parser.impl.GetSignersRequestParserImpl;
 import io.moorea.parser.impl.NewFileRequestParserImpl;
 import io.moorea.parser.impl.NextNumberRequestParserImpl;
@@ -31,6 +32,7 @@ import io.moorea.parser.impl.ValidatePdfRequestParserImpl;
 import io.moorea.parser.request.AttachToPdfRequest;
 import io.moorea.parser.request.ConvertToPdfRequest;
 import io.moorea.parser.request.FilePostRequest;
+import io.moorea.parser.request.GetPdfPropertyRequest;
 import io.moorea.parser.request.GetSignersRequest;
 import io.moorea.parser.request.NewFileRequest;
 import io.moorea.parser.request.NextNumberRequest;
@@ -285,5 +287,23 @@ public class DocServiceController {
 			toReturn = new JsonResultList(false, "Unexpected error while fetching signers", null);
 		}
 		return toReturn;
+	}
+
+	@RequestMapping(value = "/api/files/helpers/getPdfProperty", method = RequestMethod.POST)
+	public JsonResult getPdfProperty(@RequestBody String postPayload) throws Exception {
+		IJsonParser parser = new GetPdfPropertyRequestParserImpl();
+		GetPdfPropertyRequest req = null;
+		try {
+			req = (GetPdfPropertyRequest) parser.parseJson(postPayload);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (req != null) {
+			if(pdfService.validatePdfFormat(req.getB64()).getSuccess())
+				return pdfService.getProperty(req.getB64(), req.getProperty());
+			else
+				return new JsonResult(false, "The file must be a pdf");
+		} else
+			return new JsonResult(false, "There's an error in parameters");
 	}
 }
