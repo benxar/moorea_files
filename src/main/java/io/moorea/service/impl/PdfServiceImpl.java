@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -167,7 +168,7 @@ public class PdfServiceImpl implements PdfService {
 				// CertificateInfo.getSubjectFields(pk.getSigningCertificate()));
 				// System.out.println("Revision modified: " + !pk.verify());
 				CertificateSubject cs = new CertificateSubject(pk.getSigningCertificate());
-				signers.add(new Signer(name, cs));
+				signers.add(new Signer(name, cs,pk.getSignDate().getTime()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
