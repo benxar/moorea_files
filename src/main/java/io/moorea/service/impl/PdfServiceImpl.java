@@ -46,7 +46,10 @@ public class PdfServiceImpl implements PdfService {
 			Map<String, String> auxInfo = pdfReader.getInfo();
 			if (auxInfo != null) {
 				value = auxInfo.get(property);
-				result = new JsonResult(true, "Success", value);
+				if (value != null)
+					result = new JsonResult(true, "Success", value);
+				else
+					result = new JsonResult(true, "The property wasn't found in the pdf");
 			} else {
 				result = new JsonResult(true, "The property doesn't exist in the pdf");
 			}
