@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.moorea</groupId>
@@ -10,7 +9,7 @@
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.2</version>
 
 	<parent>
 		<!-- <groupId>org.springframework.boot</groupId> -->
@@ -38,6 +37,9 @@
 	<profiles>
 	        <profile>
         	  <id>anses</id>
+		  <activation>
+      		    <activeByDefault>true</activeByDefault>
+ 		  </activation>
 	          <properties>
         	    <scm.connection>scm:git:https://github.com/moorealabs/moorea_files.git</scm.connection>
 	            <scm.url>https://github.com/moorealabs/moorea_files.git</scm.url>
@@ -207,7 +209,7 @@
                 <connection>${scm.connection}</connection>
                 <url>${scm.url}</url>
                 <developerConnection>${scm.developerConnection}</developerConnection>
-                <tag>uvhi-0.2.71</tag>
+                <tag>moorea-files-1.4.2</tag>
         </scm>
 
         <distributionManagement>
