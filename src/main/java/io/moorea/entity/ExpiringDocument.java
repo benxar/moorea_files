@@ -1,6 +1,8 @@
 package io.moorea.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.bson.types.ObjectId;
@@ -27,6 +29,7 @@ public class ExpiringDocument {
 	private ExpiringDocumentErrorCode errorCode;
 	@Transient
 	private String b64;
+	private List<Signer> signers = new ArrayList<>();
 
 	public ExpiringDocument() {
 		expiringDate = new Date(System.currentTimeMillis() + (Configuration.getInstance().getExpireAfterSeconds()*1000));
@@ -86,5 +89,13 @@ public class ExpiringDocument {
 
 	public void setB64(String b64) {
 		this.b64 = b64;
+	}
+
+	public List<Signer> getSigners() {
+		return signers;
+	}
+
+	public void setSigners(List<Signer> signers) {
+		this.signers = signers;
 	}
 }

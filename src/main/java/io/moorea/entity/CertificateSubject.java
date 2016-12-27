@@ -123,6 +123,8 @@ public class CertificateSubject {
 		// TODO Auto-generated constructor stub
 	}
 
+	public CertificateSubject() {}
+	
 	public String getEmail() {
 		return email;
 	}
