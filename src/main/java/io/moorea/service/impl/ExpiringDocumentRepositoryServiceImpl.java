@@ -1,5 +1,6 @@
 package io.moorea.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.mongodb.morphia.query.Query;
@@ -8,12 +9,13 @@ import org.springframework.stereotype.Service;
 import com.mongodb.WriteResult;
 
 import io.moorea.entity.ExpiringDocument;
+import io.moorea.entity.Signer;
 import io.moorea.persistence.RepositoryDatastore;
 import io.moorea.service.ExpiringDocumentRepositoryService;
 
 @Service
 public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRepositoryService {
-
+	
 	@Override
 	public ExpiringDocument checkExistence(UUID key) {
 		ExpiringDocument result = null;
@@ -31,11 +33,12 @@ public class ExpiringDocumentRepositoryServiceImpl implements ExpiringDocumentRe
 	}
 
 	@Override
-	public ExpiringDocument addPendingofInsertDocument(UUID docId, int number) {
+	public ExpiringDocument addPendingofInsertDocument(UUID docId, int number,List<Signer> lSigners) {
 		try {
 			ExpiringDocument auxEd = new ExpiringDocument();
 			auxEd.setParentDocument(docId);
 			auxEd.setNumber(number);
+			auxEd.setSigners(lSigners);
 			RepositoryDatastore.getDatastore().save(auxEd);
 			return auxEd;
 		} catch (Exception e) {

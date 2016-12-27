@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -203,19 +202,23 @@ public class PdfServiceImpl implements PdfService {
 			reader = new PdfReader(Base64.decode(b64Pdf));
 			PdfDictionary root = reader.getCatalog();
 			PdfDictionary names = root.getAsDict(PdfName.NAMES); // may be null
-			PdfArray embeddedFiles = names.getAsArray(PdfName.EMBEDDEDFILES); // may
-																				// be
-																				// null
-			int len = embeddedFiles.size();
-			for (int i = 0; i < len; i += 2) {
-				PdfName name = embeddedFiles.getAsName(i); // should always be
-															// present
-				Attachment auxAtt = new Attachment();
-				String nombre = PdfName.decodeName(name.toString());
-				String extension = nombre.lastIndexOf('.') > 0 ? nombre.substring(nombre.lastIndexOf('.')) : "";
-				auxAtt.setName(PdfName.decodeName(name.toString()));
-				auxAtt.setExtension(extension);
-				result.add(auxAtt);
+			if (names != null) {
+				PdfArray embeddedFiles = names.getAsArray(PdfName.EMBEDDEDFILES); // may
+				// be
+				// null
+				if (embeddedFiles != null) {
+					int len = embeddedFiles.size();
+					for (int i = 0; i < len; i += 2) {
+						PdfName name = embeddedFiles.getAsName(i); // should always be
+																	// present
+						Attachment auxAtt = new Attachment();
+						String nombre = PdfName.decodeName(name.toString());
+						String extension = nombre.lastIndexOf('.') > 0 ? nombre.substring(nombre.lastIndexOf('.')) : "";
+						auxAtt.setName(PdfName.decodeName(name.toString()));
+						auxAtt.setExtension(extension);
+						result.add(auxAtt);
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

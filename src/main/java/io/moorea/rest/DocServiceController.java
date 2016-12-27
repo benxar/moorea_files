@@ -77,7 +77,8 @@ public class DocServiceController {
 			NextNumberRequest req = (NextNumberRequest) parser.parseJson(postPayload);
 			JsonResult isPdf = pdfService.validatePdfFormat(req.getB64());
 			if (isPdf.getSuccess()) {
-				ExpiringDocument nextDocument = documentService.nextNumber(id);
+				List<Signer> lSigners = pdfService.getSigners(req.getB64());
+				ExpiringDocument nextDocument = documentService.nextNumber(id, lSigners);
 				if (nextDocument != null) {
 					switch (nextDocument.getErrorCode()) {
 					case DATASTORE_NOT_AVAILABLE:
@@ -199,7 +200,7 @@ public class DocServiceController {
 					tempDoc = expDocService.checkExistence(key);
 					if (tempDoc != null) {
 						result = documentService.saveDocumentFile(tempDoc.getParentDocument(), tempDoc.getNumber(), key,
-								req);
+								tempDoc.getSigners(), req);
 					} else
 						result = new JsonResult(false,
 								"The document was not booked for the given file or the key is invalid");
@@ -299,7 +300,7 @@ public class DocServiceController {
 			e.printStackTrace();
 		}
 		if (req != null) {
-			if(pdfService.validatePdfFormat(req.getB64()).getSuccess())
+			if (pdfService.validatePdfFormat(req.getB64()).getSuccess())
 				return pdfService.getProperty(req.getB64(), req.getProperty());
 			else
 				return new JsonResult(false, "The file must be a pdf");

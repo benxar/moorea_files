@@ -16,7 +16,6 @@ public class DocumentFile {
 	private List<Attachment> attachments = new ArrayList<>();
 	@Transient
 	private String b64;
-	@Transient
 	private List<Signer> signers;
 
 	public int getDoc_id() {

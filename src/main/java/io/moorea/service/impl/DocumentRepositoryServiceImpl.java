@@ -29,7 +29,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 
 	@Autowired
 	private PdfService pService;
-	
+
 	@Override
 	public UUID save(Document document) {
 		if (RepositoryDatastore.getDatastore() != null)
@@ -123,7 +123,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public JsonResult saveDocumentFile(UUID id, int number, UUID key, FilePostRequest req) {
+	public JsonResult saveDocumentFile(UUID id, int number, UUID key, List<Signer> lSigners, FilePostRequest req) {
 		JsonResult toReturn = null;
 		try {
 			if (RepositoryDatastore.getDatastore() != null) {
@@ -136,8 +136,11 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 						DocumentFile toAdd = new DocumentFile(id, number, req.getName(),
 								id.toString() + "_" + number + ".pdf");
 						List<Attachment> lAtt = pService.getAttachments(req.getB64());
+						if (lSigners != null) {
+							toAdd.setSigners(lSigners);
+						}
 						if (lAtt != null) {
-							toAdd.setAttachments(lAtt);	
+							toAdd.setAttachments(lAtt);
 						}
 						RepositoryDatastore.getDatastore().update(auxResult, uq.push("files", toAdd));
 						UpdateOperations<Document> uq1 = RepositoryDatastore.getDatastore()
@@ -167,7 +170,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public ExpiringDocument nextNumber(UUID id) {
+	public ExpiringDocument nextNumber(UUID id, List<Signer> lSigners) {
 		int nextNumber = -1;
 		ExpiringDocument result = null;
 		try {
@@ -178,7 +181,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 					nextNumber = auxResult.getFiles().size() + 1;
 					int lastPendingOfInsertDocument = edService.getLastPendingOfInsertDocument(id);
 					if (lastPendingOfInsertDocument == 0)
-						result = edService.addPendingofInsertDocument(id, nextNumber);
+						result = edService.addPendingofInsertDocument(id, nextNumber, lSigners);
 					else
 						result = new ExpiringDocument(ExpiringDocumentErrorCode.FILE_LOCKED);
 				} else
