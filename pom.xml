@@ -10,6 +10,7 @@
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
+	<version>1.4.2-SNAPSHOT</version>
 
 	<parent>
 		<!-- <groupId>org.springframework.boot</groupId> -->
@@ -34,6 +35,18 @@
 		<start-class>io.moorea.Application</start-class>
 
 	</properties>
+	<profiles>
+	        <profile>
+        	  <id>anses</id>
+	          <properties>
+        	    <scm.connection>scm:git:https://github.com/moorealabs/moorea_files.git</scm.connection>
+	            <scm.url>https://github.com/moorealabs/moorea_files.git</scm.url>
+	            <scm.developerConnection>scm:git:https://github.com/moorealabs/moorea_files.git</scm.developerConnection>
+	          </properties>
+	        </profile>
+	</profiles>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -145,6 +158,11 @@
 					</execution>
 				</executions>
 			</plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-release-plugin</artifactId>
+                                <version>2.5.2</version>
+                        </plugin>
 		</plugins>
 	</build>
 
@@ -185,5 +203,22 @@
 		</pluginRepository>
 	</pluginRepositories>
 
+        <scm>
+                <connection>${scm.connection}</connection>
+                <url>${scm.url}</url>
+                <developerConnection>${scm.developerConnection}</developerConnection>
+                <tag>uvhi-0.2.71</tag>
+        </scm>
+
+        <distributionManagement>
+                <snapshotRepository>
+                        <id>anses-repo</id>
+                        <url>http://ansesalm.anses.gov.ar/nexus/content/repositories/maven-anses-snapshots</url>
+                </snapshotRepository>
+                <repository>
+                        <id>anses-repo</id>
+                        <url>http://ansesalm.anses.gov.ar/nexus/content/repositories/maven-anses-releases</url>
+                </repository>
+        </distributionManagement>
 
 </project>
