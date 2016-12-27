@@ -13,6 +13,7 @@
 - [ ] return http errors when the format of the messages is incorrect (now only returning success=false)
 - [ ] agregar fecha de firma de documento al consultar por un documento especifico (/api/files/manager/<id>/documents/<number>)
 - [x] Leer en los properties las variables -d de java en lugar de escribirlas planas en el mismo.)
+- [ ] URGENTE: sacar la libreria "commons-imaging-1.0-SNAPSHOT" para que no pinche en Nexus repository por ser SNAPSHOT
 
 ## API
 
