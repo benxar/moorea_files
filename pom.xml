@@ -9,7 +9,7 @@
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<parent>
 		<!-- <groupId>org.springframework.boot</groupId> -->
