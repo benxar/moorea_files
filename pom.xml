@@ -9,7 +9,7 @@
 
 	<name>moorea-files</name>
 	<description>Files Services</description>
-	<version>1.4.2</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<parent>
 		<!-- <groupId>org.springframework.boot</groupId> -->
@@ -41,9 +41,9 @@
       		    <activeByDefault>true</activeByDefault>
  		  </activation>
 	          <properties>
-        	    <scm.connection>scm:git:https://github.com/moorealabs/moorea_files.git</scm.connection>
-	            <scm.url>https://github.com/moorealabs/moorea_files.git</scm.url>
-	            <scm.developerConnection>scm:git:https://github.com/moorealabs/moorea_files.git</scm.developerConnection>
+        	    <scm.connection>scm:git:https://github.com/benxar/moorea_files.git</scm.connection>
+	            <scm.url>https://github.com/benxar//moorea_files.git</scm.url>
+	            <scm.developerConnection>scm:git:https://github.com/benxar//moorea_files.git</scm.developerConnection>
 	          </properties>
 	        </profile>
 	</profiles>
