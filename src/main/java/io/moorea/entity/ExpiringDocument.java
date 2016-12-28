@@ -14,7 +14,7 @@ import org.mongodb.morphia.annotations.Transient;
 import io.moorea.configuration.Configuration;
 import io.moorea.enums.ExpiringDocumentErrorCode;
 
-@Entity("ExpiringDocument")
+@Entity("ExpiringDocuments")
 public class ExpiringDocument {
 	@Id
 	private ObjectId id;

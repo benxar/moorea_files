@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.mongodb.morphia.annotations.*;
 
-@Entity("Document")
+@Entity("Documents")
 public class Document {
     @Id
     private UUID id;

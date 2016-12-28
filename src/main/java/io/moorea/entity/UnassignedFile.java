@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Transient;
 
-@Entity("UnassignedFile")
+@Entity("UnassignedFiles")
 public class UnassignedFile {
 	@Id
 	private UUID id;
