@@ -42,8 +42,8 @@
  		  </activation>
 	          <properties>
         	    <scm.connection>scm:git:https://github.com/benxar/moorea_files.git</scm.connection>
-	            <scm.url>https://github.com/benxar/moorea_files.git</scm.url>
-	            <scm.developerConnection>scm:git:https://github.com/benxar//moorea_files.git</scm.developerConnection>
+	            <scm.url>https://github.com/benxar/moorea_files</scm.url>
+	            <scm.developerConnection>scm:git:https://github.com/benxar/moorea_files.git</scm.developerConnection>
 	          </properties>
 	        </profile>
 	</profiles>
